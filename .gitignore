@@ -1,0 +1,29 @@
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+
+# Maven wrapper jar (downloaded on demand)
+.mvn/
+
+# Environment files (NEVER commit real secrets)
+.env
+.env.local
+.env.*.local
+
+# Docker overrides
+docker-compose.override.yml
+
+# Build outputs
+backend/target/
+frontend/node_modules/
+frontend/dist/
+
+# Logs
+*.log
+
+.CLAUDE.md
+.claude/
