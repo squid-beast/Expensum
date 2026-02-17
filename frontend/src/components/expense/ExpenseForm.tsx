@@ -7,6 +7,7 @@ import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
 import { Label } from "@/ui/label";
 import { Select } from "@/ui/select";
+import CelebrationOverlay from "@/components/common/CelebrationOverlay";
 
 interface Props {
   onSuccess: () => void;
@@ -22,6 +23,7 @@ export default function ExpenseForm({ onSuccess }: Props) {
   const [recurring, setRecurring] = useState(false);
   const [loading, setLoading] = useState(false);
   const activeHousehold = useHouseholdStore((s) => s.activeHousehold);
+  const [showCelebration, setShowCelebration] = useState(false);
 
   useEffect(() => {
     categoryService.getAll().then(setCategories).catch(console.error);
@@ -41,7 +43,8 @@ export default function ExpenseForm({ onSuccess }: Props) {
           ? { householdId: activeHousehold.id, shared: true }
           : {}),
       });
-      onSuccess();
+      setShowCelebration(true);
+      setTimeout(() => onSuccess(), 800);
     } catch {
       // handled by interceptor
     } finally {
@@ -163,10 +166,17 @@ export default function ExpenseForm({ onSuccess }: Props) {
           </div>
         </div>
 
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? "Adding..." : "Add Expense"}
-        </Button>
+        <div className="relative">
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? "Adding..." : "Add Expense"}
+          </Button>
+        </div>
       </form>
+
+      <CelebrationOverlay
+        isVisible={showCelebration}
+        onComplete={() => setShowCelebration(false)}
+      />
     </div>
   );
 }

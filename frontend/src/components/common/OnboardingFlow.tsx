@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Check, Wallet, Home, UserPlus, Receipt } from "lucide-react";
+import { ArrowRight, Check, Wallet, Home, UserPlus, Receipt, Sparkles } from "lucide-react";
 import { Button } from "@/ui/button";
 import { Card, CardContent } from "@/ui/card";
 import type { LucideIcon } from "lucide-react";
@@ -70,7 +70,10 @@ export default function OnboardingFlow({ completedSteps = [], onDismiss }: Props
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-sm font-semibold">Getting started</p>
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-primary" />
+              <p className="text-sm font-semibold">Getting started</p>
+            </div>
             <button
               onClick={() => { setDismissed(true); onDismiss(); }}
               className="text-xs text-muted-foreground hover:text-foreground cursor-pointer"

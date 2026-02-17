@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { DollarSign, CreditCard, Landmark, Loader2 } from "lucide-react";
 import AppLayout from "@/components/layout/AppLayout";
 import SummaryCard from "@/components/dashboard/SummaryCard";
@@ -39,6 +39,7 @@ export default function DashboardPage() {
   const [onboardingDismissed, setOnboardingDismissed] = useState(
     () => localStorage.getItem("onboarding_dismissed") === "true"
   );
+  const [personalTab, setPersonalTab] = useState<"overview" | "analytics">("overview");
   const activeHousehold = useHouseholdStore((s) => s.activeHousehold);
   const households = useHouseholdStore((s) => s.households);
   const user = useAuthStore((s) => s.user);
@@ -88,11 +89,7 @@ export default function DashboardPage() {
   if (activeHousehold && householdSummary) {
     return (
       <AppLayout>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="p-6 space-y-6 max-w-7xl mx-auto"
-        >
+        <div className="p-6 space-y-6 max-w-7xl mx-auto">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
               <h1 className="text-2xl font-bold">{householdSummary.householdName}</h1>
@@ -143,7 +140,7 @@ export default function DashboardPage() {
             <RecentExpenses expenses={householdSummary.recentExpenses} />
             <HouseholdNotes householdId={activeHousehold.id} />
           </div>
-        </motion.div>
+        </div>
 
         <QuickAddExpense onSuccess={fetchData} />
       </AppLayout>
@@ -153,11 +150,7 @@ export default function DashboardPage() {
   // Personal dashboard
   return (
     <AppLayout>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="p-6 space-y-6 max-w-7xl mx-auto"
-      >
+      <div className="p-6 space-y-6 max-w-7xl mx-auto">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <h1 className="text-2xl font-bold">Dashboard</h1>
@@ -198,35 +191,75 @@ export default function DashboardPage() {
           </motion.div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <SummaryCard title="Monthly Income" value={summary?.monthlyIncome ?? 0} icon={DollarSign} delay={0} />
-          <SummaryCard title="Total Spent" value={summary?.totalSpent ?? 0} icon={CreditCard} trend="up" delay={0.1} />
-          <SummaryCard title="Remaining" value={summary?.remaining ?? 0} icon={Landmark} trend="down" delay={0.2} />
+        {/* Tab Switcher */}
+        <div className="flex gap-1 p-1 bg-muted rounded-lg w-fit">
+          {(["overview", "analytics"] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setPersonalTab(tab)}
+              className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors cursor-pointer ${
+                personalTab === tab
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {tab === "overview" ? "Overview" : "Analytics"}
+            </button>
+          ))}
         </div>
 
-        {summary && (
-          <TrendIndicator
-            currentSpent={summary.totalSpent}
-            month={month}
-            year={year}
-          />
-        )}
+        <AnimatePresence mode="wait">
+          {personalTab === "overview" && (
+            <motion.div
+              key="overview"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.15 }}
+              className="space-y-6"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <SummaryCard title="Monthly Income" value={summary?.monthlyIncome ?? 0} icon={DollarSign} delay={0} />
+                <SummaryCard title="Total Spent" value={summary?.totalSpent ?? 0} icon={CreditCard} trend="up" delay={0.1} />
+                <SummaryCard title="Remaining" value={summary?.remaining ?? 0} icon={Landmark} trend="down" delay={0.2} />
+              </div>
 
-        <CategoryInsightChips data={summary?.categoryBreakdown ?? []} />
+              {summary && (
+                <TrendIndicator
+                  currentSpent={summary.totalSpent}
+                  month={month}
+                  year={year}
+                />
+              )}
 
-        <BudgetOverview summary={summary} />
+              <CategoryInsightChips data={summary?.categoryBreakdown ?? []} />
 
-        {summary && <SpendingInsights summary={summary} />}
+              <BudgetOverview summary={summary} />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <CategoryBreakdown data={summary?.categoryBreakdown ?? []} />
-          <SpendingChart data={summary?.categoryBreakdown ?? []} />
-        </div>
+              <RecentExpenses expenses={summary?.recentExpenses ?? []} />
+            </motion.div>
+          )}
+          {personalTab === "analytics" && (
+            <motion.div
+              key="analytics"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.15 }}
+              className="space-y-6"
+            >
+              {summary && <SpendingInsights summary={summary} />}
 
-        <RecentExpenses expenses={summary?.recentExpenses ?? []} />
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <CategoryBreakdown data={summary?.categoryBreakdown ?? []} />
+                <SpendingChart data={summary?.categoryBreakdown ?? []} />
+              </div>
 
-        {summary && <Achievements summary={summary} />}
-      </motion.div>
+              {summary && <Achievements summary={summary} />}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       <QuickAddExpense onSuccess={fetchData} />
     </AppLayout>

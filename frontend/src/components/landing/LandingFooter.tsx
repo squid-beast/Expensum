@@ -1,3 +1,4 @@
+import { NavLink } from "react-router-dom";
 import BBLogo from "./BBLogo";
 
 export default function LandingFooter() {
@@ -7,15 +8,30 @@ export default function LandingFooter() {
         <BBLogo />
 
         <div className="flex gap-6 text-sm text-muted-foreground">
-          <a href="#" className="transition-colors hover:text-foreground">
+          <NavLink
+            to="/privacy"
+            className={({ isActive }) =>
+              `transition-colors hover:text-foreground ${isActive ? "text-foreground font-medium" : ""}`
+            }
+          >
             Privacy
-          </a>
-          <a href="#" className="transition-colors hover:text-foreground">
+          </NavLink>
+          <NavLink
+            to="/terms"
+            className={({ isActive }) =>
+              `transition-colors hover:text-foreground ${isActive ? "text-foreground font-medium" : ""}`
+            }
+          >
             Terms
-          </a>
-          <a href="#" className="transition-colors hover:text-foreground">
+          </NavLink>
+          <NavLink
+            to="/contact"
+            className={({ isActive }) =>
+              `transition-colors hover:text-foreground ${isActive ? "text-foreground font-medium" : ""}`
+            }
+          >
             Contact
-          </a>
+          </NavLink>
         </div>
 
         <p className="text-xs text-muted-foreground">

@@ -8,6 +8,7 @@ import type { Category } from "@/types/category.types";
 import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
 import { Select } from "@/ui/select";
+import CelebrationOverlay from "@/components/common/CelebrationOverlay";
 
 interface Props {
   onSuccess: () => void;
@@ -21,6 +22,7 @@ export default function QuickAddExpense({ onSuccess }: Props) {
   const [shared, setShared] = useState(false);
   const [loading, setLoading] = useState(false);
   const activeHousehold = useHouseholdStore((s) => s.activeHousehold);
+  const [showCelebration, setShowCelebration] = useState(false);
 
   useEffect(() => {
     if (open && categories.length === 0) {
@@ -48,7 +50,8 @@ export default function QuickAddExpense({ onSuccess }: Props) {
       });
       reset();
       setOpen(false);
-      onSuccess();
+      setShowCelebration(true);
+      setTimeout(() => onSuccess(), 800);
     } catch {
       // handled by interceptor
     } finally {
@@ -162,6 +165,12 @@ export default function QuickAddExpense({ onSuccess }: Props) {
           </>
         )}
       </AnimatePresence>
+
+      {/* Success celebration overlay */}
+      <CelebrationOverlay
+        isVisible={showCelebration}
+        onComplete={() => setShowCelebration(false)}
+      />
     </>
   );
 }

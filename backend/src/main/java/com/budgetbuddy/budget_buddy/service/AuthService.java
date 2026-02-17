@@ -36,6 +36,9 @@ public class AuthService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setFullName(request.getFullName());
+        if (request.getPhoneNumber() != null && !request.getPhoneNumber().isBlank()) {
+            user.setPhoneNumber(request.getPhoneNumber());
+        }
         User saved = userRepository.save(user);
 
         String token = tokenProvider.generateTokenForUser(saved.getId());
@@ -61,6 +64,6 @@ public class AuthService {
     private UserProfileResponse toProfileResponse(User user) {
         return new UserProfileResponse(
                 user.getId(), user.getEmail(), user.getFullName(),
-                user.getMonthlyIncome(), user.getSavingsGoal());
+                user.getMonthlyIncome(), user.getSavingsGoal(), user.getPhoneNumber());
     }
 }

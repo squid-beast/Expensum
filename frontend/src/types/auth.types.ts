@@ -7,6 +7,7 @@ export interface SignupRequest {
   email: string;
   password: string;
   fullName: string;
+  phoneNumber?: string;
 }
 
 export interface UserProfile {
@@ -15,6 +16,7 @@ export interface UserProfile {
   fullName: string;
   monthlyIncome: number;
   savingsGoal: number | null;
+  phoneNumber: string | null;
 }
 
 export interface AuthResponse {

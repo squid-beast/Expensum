@@ -13,4 +13,5 @@ public class UserProfileResponse {
     private String fullName;
     private BigDecimal monthlyIncome;
     private BigDecimal savingsGoal;
+    private String phoneNumber;
 }

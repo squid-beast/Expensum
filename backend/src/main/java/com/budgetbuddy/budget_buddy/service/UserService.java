@@ -38,6 +38,6 @@ public class UserService {
     private UserProfileResponse toResponse(User user) {
         return new UserProfileResponse(
                 user.getId(), user.getEmail(), user.getFullName(),
-                user.getMonthlyIncome(), user.getSavingsGoal());
+                user.getMonthlyIncome(), user.getSavingsGoal(), user.getPhoneNumber());
     }
 }

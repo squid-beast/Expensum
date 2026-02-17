@@ -16,7 +16,7 @@ const fadeUp = {
 
 export default function HeroSection() {
   return (
-    <section className="px-4 pb-16 pt-12 md:pt-20 md:pb-24">
+    <section id="hero-section" className="px-4 pb-16 pt-12 md:pt-20 md:pb-24">
       <div className="mx-auto max-w-5xl">
         <div className="grid gap-10 md:grid-cols-2 md:items-center md:gap-12">
           {/* Copy */}

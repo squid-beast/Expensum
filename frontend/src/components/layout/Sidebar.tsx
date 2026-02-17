@@ -1,6 +1,5 @@
-import { NavLink, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Receipt, Wallet, Home, LogOut } from "lucide-react";
-import { useAuthStore } from "@/store/authStore";
+import { NavLink } from "react-router-dom";
+import { LayoutDashboard, Receipt, Wallet, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { LucideIcon } from "lucide-react";
 import HouseholdSwitcher from "@/components/household/HouseholdSwitcher";
@@ -13,14 +12,6 @@ const links: { to: string; label: string; icon: LucideIcon }[] = [
 ];
 
 export default function Sidebar() {
-  const clearAuth = useAuthStore((s) => s.clearAuth);
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    clearAuth();
-    navigate("/login");
-  };
-
   return (
     <aside className="w-64 min-h-screen bg-card border-r border-border flex flex-col">
       <div className="p-6">
@@ -49,16 +40,6 @@ export default function Sidebar() {
       </nav>
 
       <HouseholdSwitcher />
-
-      <div className="p-3 border-t border-border">
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors cursor-pointer"
-        >
-          <LogOut className="h-4 w-4" />
-          Logout
-        </button>
-      </div>
     </aside>
   );
 }

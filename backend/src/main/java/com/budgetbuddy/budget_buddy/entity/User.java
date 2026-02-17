@@ -35,6 +35,9 @@ public class User {
     @Column(name = "savings_goal", precision = 10, scale = 2)
     private BigDecimal savingsGoal;
 
+    @Column(name = "phone_number", length = 20)
+    private String phoneNumber;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
