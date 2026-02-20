@@ -26,7 +26,7 @@ import java.util.Set;
  *      into the entityManagerFactory bean definition — guaranteeing migrations
  *      complete before Hibernate schema validation runs.
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class FlywayConfig implements BeanDefinitionRegistryPostProcessor, PriorityOrdered {
 
     private static final String ENTITY_MANAGER_FACTORY_BEAN = "entityManagerFactory";
