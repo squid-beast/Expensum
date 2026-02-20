@@ -1,7 +1,17 @@
 import axios from "axios";
 
+const baseURL = import.meta.env.VITE_API_BASE_URL;
+
+if (!baseURL) {
+  throw new Error(
+    "[Expensum] VITE_API_BASE_URL is not set.\n" +
+    "  Dev:  check frontend/.env.development\n" +
+    "  Prod: set VITE_API_BASE_URL in your Vercel environment variables."
+  );
+}
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "/api",
+  baseURL,
   headers: { "Content-Type": "application/json" },
 });
 

@@ -8,11 +8,11 @@
 		<version>4.0.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.budgetbuddy</groupId>
-	<artifactId>budget-buddy</artifactId>
+	<groupId>com.expensum</groupId>
+	<artifactId>expensum</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Budget Buddy</name>
-	<description>Personal finance and budgeting assistant application.</description>
+	<name>Expensum</name>
+	<description>Personal finance and expense tracking application.</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -74,6 +74,14 @@
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-database-postgresql</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>

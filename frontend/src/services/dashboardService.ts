@@ -27,7 +27,7 @@ export const dashboardService = {
     const url = window.URL.createObjectURL(new Blob([res.data]));
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", `budget-buddy-${year}-${String(month).padStart(2, "0")}.csv`);
+    link.setAttribute("download", `expensum-${year}-${String(month).padStart(2, "0")}.csv`);
     document.body.appendChild(link);
     link.click();
     link.remove();

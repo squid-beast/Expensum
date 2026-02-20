@@ -91,8 +91,11 @@ export default function SignupPage() {
           >
             <UserPlus className="h-7 w-7 text-primary" />
           </motion.div>
-          <h1 className="text-3xl font-bold text-foreground">Join Budget Buddy</h1>
-          <p className="text-muted-foreground mt-1">Start your smart budgeting journey</p>
+          <h1 className="flex items-center justify-center text-3xl">
+            <span className="tracking-tight text-foreground mr-1" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700 }}>Join Expen</span>
+            <span className="tracking-tight text-primary" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 300 }}>Sum</span>
+          </h1>
+          <p className="text-muted-foreground mt-1">Start tracking your expenses smarter</p>
         </div>
 
         <Card>
@@ -262,7 +265,7 @@ export default function SignupPage() {
               </div>
               <DialogTitle className="text-xl">Account created</DialogTitle>
               <DialogDescription className="text-base">
-                Your account has been created successfully. Sign in to continue to Budget Buddy.
+                Your account has been created successfully. Sign in to continue to Expensum.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter className="flex sm:justify-center">

@@ -25,7 +25,7 @@ npm run preview  # Preview production build
 
 ### Database
 ```bash
-/opt/homebrew/Cellar/postgresql@16/16.10/bin/psql -p 5433 -U postgres -d budgetbuddy
+/opt/homebrew/Cellar/postgresql@16/16.10/bin/psql -p 5433 -U postgres -d expensum
 ```
 PostgreSQL runs on port **5433** (not default 5432), user `postgres`, no password.
 
@@ -33,12 +33,12 @@ PostgreSQL runs on port **5433** (not default 5432), user `postgres`, no passwor
 
 **Monorepo** with separate `frontend/` and `backend/` directories. No shared build system — they run independently.
 
-### Backend (`com.budgetbuddy.budget_buddy`)
+### Backend (`com.expensum`)
 Standard Spring Boot layered architecture:
 - **Controller** → **Service** → **Repository** → **Entity**
 - DTOs in `/dto` organized by feature (auth, expense, household, dashboard, user, category)
 - Global exception handling via `@RestControllerAdvice` in `GlobalExceptionHandler`
-- `DataInitializer` seeds 10 expense categories on startup
+- `DataInitializer` seeds 9 expense categories on startup (handled by Flyway V2 migration)
 
 ### Frontend
 - **Pages** (`/pages`): Route-level components
@@ -68,7 +68,7 @@ Path alias: `@/` → `src/` (configured in both vite.config.ts and tsconfig)
 - Vite proxies `/api` → `http://localhost:8080` (no CORS issues in dev)
 - Backend CORS allows `localhost:5173` (hardcoded in `WebConfig`)
 - Tailwind v4: uses `@import "tailwindcss"` + `@theme` block in `index.css` (no tailwind.config.js)
-- Spring Boot: `application.properties` has JPA auto-update DDL, SQL logging enabled
+- Spring Boot: `application.properties` uses Flyway for schema migrations; Hibernate set to `validate` only
 
 ## Conventions
 - Backend validation via `@Valid` on request DTOs with Jakarta validation annotations

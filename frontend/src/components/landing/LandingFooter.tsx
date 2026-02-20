@@ -35,7 +35,7 @@ export default function LandingFooter() {
         </div>
 
         <p className="text-xs text-muted-foreground">
-          &copy; {new Date().getFullYear()} Budget Buddy
+          &copy; {new Date().getFullYear()} Expensum
         </p>
       </div>
     </footer>

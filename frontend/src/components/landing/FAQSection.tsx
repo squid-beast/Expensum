@@ -8,7 +8,7 @@ import {
 const faqs = [
   {
     q: "Is this like Splitwise?",
-    a: "Budget Buddy focuses on ongoing shared budgeting rather than one-off expense splitting. You set monthly budgets, track spending in real time, and see where money is going across your household.",
+    a: "Expensum focuses on ongoing shared budgeting rather than one-off expense splitting. You set monthly budgets, track spending in real time, and see where money is going across your household.",
   },
   {
     q: "Can both roommates add expenses?",
@@ -20,7 +20,7 @@ const faqs = [
   },
   {
     q: "Do you store bank data or connect to my bank?",
-    a: "No. Budget Buddy does not connect to bank accounts or store any financial credentials. You manually log expenses, keeping you in full control of your data.",
+    a: "No. Expensum does not connect to bank accounts or store any financial credentials. You manually log expenses, keeping you in full control of your data.",
   },
   {
     q: "Can I cancel Premium anytime?",
@@ -44,7 +44,7 @@ export default function FAQSection() {
           Frequently asked questions
         </h2>
         <p className="mx-auto mt-2 max-w-md text-center text-muted-foreground">
-          Everything you need to know about Budget Buddy.
+          Everything you need to know about Expensum.
         </p>
 
         <div className="mt-10">

@@ -71,19 +71,29 @@ function SidebarLogo() {
   return (
     <Link
       to="/dashboard"
-      className="font-normal flex space-x-2 items-center text-sm text-foreground py-1 relative z-20"
+      className="flex items-center py-1 relative z-20"
     >
-      <div className="h-5 w-6 bg-primary dark:bg-primary rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
       <motion.span
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="font-semibold text-foreground whitespace-pre"
         style={{
-          display: open ? "inline-block" : "none",
+          display: open ? "flex" : "none",
+          alignItems: "center",
           overflow: "hidden",
         }}
       >
-        Budget Buddy
+        <span
+          className="text-xl tracking-tight text-foreground whitespace-pre"
+          style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700 }}
+        >
+          Expen
+        </span>
+        <span
+          className="text-xl tracking-tight text-primary whitespace-pre"
+          style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 300 }}
+        >
+          Sum
+        </span>
       </motion.span>
     </Link>
   );
@@ -93,9 +103,14 @@ function SidebarLogoIcon() {
   return (
     <Link
       to="/dashboard"
-      className="font-normal flex space-x-2 items-center text-sm text-foreground py-1 relative z-20"
+      className="flex items-center py-1 relative z-20"
     >
-      <div className="h-5 w-6 bg-primary dark:bg-primary rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
+      <span
+        className="text-xl tracking-tight text-foreground"
+        style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700 }}
+      >
+        E
+      </span>
     </Link>
   );
 }

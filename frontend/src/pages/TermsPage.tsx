@@ -21,7 +21,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-semibold text-foreground">1. Acceptance of Terms</h2>
             <p>
-              By accessing or using Budget Buddy, you agree to be bound by these Terms of Service.
+              By accessing or using Expensum, you agree to be bound by these Terms of Service.
               If you do not agree, please do not use our service.
             </p>
           </section>
@@ -29,7 +29,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-semibold text-foreground">2. Use of Service</h2>
             <p>
-              You may use Budget Buddy for personal or household budgeting in accordance with these
+              You may use Expensum for personal or household budgeting in accordance with these
               terms. You are responsible for maintaining the confidentiality of your account and
               for all activity under your account.
             </p>
@@ -56,7 +56,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-semibold text-foreground">5. Disclaimer</h2>
             <p>
-              Budget Buddy is provided “as is.” We do not guarantee uninterrupted or error-free
+              Expensum is provided “as is.” We do not guarantee uninterrupted or error-free
               service. Financial decisions you make based on the app are your responsibility.
             </p>
           </section>

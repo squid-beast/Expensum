@@ -15,7 +15,10 @@ export default function Sidebar() {
   return (
     <aside className="w-64 min-h-screen bg-card border-r border-border flex flex-col">
       <div className="p-6">
-        <h1 className="text-xl font-bold text-primary">Budget Buddy</h1>
+        <h1 className="flex items-center text-xl">
+          <span className="tracking-tight text-foreground" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700 }}>Expen</span>
+          <span className="tracking-tight text-primary" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 300 }}>Sum</span>
+        </h1>
         <p className="text-xs text-muted-foreground mt-1">Smart personal finance</p>
       </div>
 

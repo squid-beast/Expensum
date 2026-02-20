@@ -30,7 +30,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-lg font-semibold text-foreground">2. How We Use Your Information</h2>
             <p>
-              We use your information to operate and improve Budget Buddy, personalize your
+              We use your information to operate and improve Expensum, personalize your
               experience, send service-related communications, and comply with legal obligations.
             </p>
           </section>

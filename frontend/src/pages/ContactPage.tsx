@@ -28,10 +28,10 @@ export default function ContactPage() {
               <p>
                 For support and general inquiries, reach us at{" "}
                 <a
-                  href="mailto:support@budgetbuddy.app"
+                  href="mailto:support@expensum.app"
                   className="text-primary underline hover:no-underline"
                 >
-                  support@budgetbuddy.app
+                  support@expensum.app
                 </a>
                 . We typically respond within 1–2 business days.
               </p>
@@ -45,12 +45,12 @@ export default function ContactPage() {
             <div>
               <h2 className="text-lg font-semibold text-foreground mb-1">Feedback</h2>
               <p>
-                Suggestions and bug reports help us improve Budget Buddy. Send them to{" "}
+                Suggestions and bug reports help us improve Expensum. Send them to{" "}
                 <a
-                  href="mailto:feedback@budgetbuddy.app"
+                  href="mailto:feedback@expensum.app"
                   className="text-primary underline hover:no-underline"
                 >
-                  feedback@budgetbuddy.app
+                  feedback@expensum.app
                 </a>
                 .
               </p>

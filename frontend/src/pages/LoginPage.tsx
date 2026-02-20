@@ -51,8 +51,11 @@ export default function LoginPage() {
           >
             <Wallet className="h-7 w-7 text-primary" />
           </motion.div>
-          <h1 className="text-3xl font-bold text-foreground">Budget Buddy</h1>
-          <p className="text-muted-foreground mt-1">Your smart budgeting companion</p>
+          <h1 className="flex items-center justify-center text-3xl">
+            <span className="tracking-tight text-foreground" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700 }}>Expen</span>
+            <span className="tracking-tight text-primary" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 300 }}>Sum</span>
+          </h1>
+          <p className="text-muted-foreground mt-1">Your smart expense tracker</p>
         </div>
 
         <Card>
