@@ -84,10 +84,10 @@ export default function HouseholdPage() {
 
   return (
     <AppLayout>
-      <div className="p-6 max-w-3xl mx-auto space-y-6">
+      <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-5">
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-            <Home className="h-6 w-6 text-primary" />
+          <h1 className="text-xl font-bold tracking-tight flex items-center gap-2">
+            <Home className="h-5 w-5 text-primary" />
             Household
           </h1>
           <p className="text-sm text-muted-foreground mt-1">

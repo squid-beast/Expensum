@@ -1,11 +1,17 @@
 import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import AppLayout from "@/components/layout/AppLayout";
 import ExpenseForm from "@/components/expense/ExpenseForm";
 import ExpenseList from "@/components/expense/ExpenseList";
 import QuickAddExpense from "@/components/expense/QuickAddExpense";
 import MonthPicker from "@/components/common/MonthPicker";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/ui/dialog";
 import { expenseService } from "@/services/expenseService";
 import { useHouseholdStore } from "@/store/householdStore";
 import type { Expense } from "@/types/expense.types";
@@ -46,10 +52,10 @@ export default function ExpensesPage() {
 
   return (
     <AppLayout>
-      <div className="p-6 max-w-4xl mx-auto space-y-6">
+      <div className="p-4 md:p-6 max-w-4xl mx-auto space-y-5">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
-            <h1 className="text-2xl font-bold">Expenses</h1>
+            <h1 className="text-xl font-bold">Expenses</h1>
             <p className="text-sm text-muted-foreground">
               {expenses.length} transactions &middot;{" "}
               {formatCurrency(expenses.reduce((s, e) => s + e.amount, 0))} total
@@ -61,8 +67,8 @@ export default function ExpensesPage() {
               year={year}
               onChange={(m, y) => { setMonth(m); setYear(y); }}
             />
-            <Button onClick={() => setShowForm(!showForm)}>
-              {showForm ? "Cancel" : "+ Add Expense"}
+            <Button onClick={() => setShowForm(true)}>
+              + Add Expense
             </Button>
           </div>
         </div>
@@ -86,21 +92,6 @@ export default function ExpensesPage() {
           </div>
         )}
 
-        <AnimatePresence>
-          {showForm && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="overflow-hidden"
-            >
-              <div className="border border-border rounded-xl p-5 bg-card">
-                <ExpenseForm onSuccess={handleSuccess} />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {loading ? (
           <div className="flex items-center justify-center py-16">
             <Loader2 className="h-8 w-8 text-primary animate-spin" />
@@ -109,6 +100,19 @@ export default function ExpensesPage() {
           <ExpenseList expenses={expenses} onUpdate={fetchExpenses} />
         )}
       </div>
+
+      {/* Add Expense Dialog */}
+      <Dialog open={showForm} onOpenChange={setShowForm}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add Expense</DialogTitle>
+            <DialogDescription>
+              Fill in the details to log a new expense.
+            </DialogDescription>
+          </DialogHeader>
+          <ExpenseForm onSuccess={handleSuccess} />
+        </DialogContent>
+      </Dialog>
 
       <QuickAddExpense onSuccess={fetchExpenses} />
     </AppLayout>

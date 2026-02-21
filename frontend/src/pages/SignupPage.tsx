@@ -1,7 +1,7 @@
 import { useState, useMemo, type FormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { UserPlus, Eye, EyeOff, Check, X } from "lucide-react";
+import { Eye, EyeOff, Check, X } from "lucide-react";
 import { authService } from "@/services/authService";
 import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
@@ -83,19 +83,10 @@ export default function SignupPage() {
         className="w-full max-w-md"
       >
         <div className="text-center mb-8">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.15, duration: 0.3 }}
-            className="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-primary/10 mb-4"
-          >
-            <UserPlus className="h-7 w-7 text-primary" />
-          </motion.div>
           <h1 className="flex items-center justify-center text-3xl">
             <span className="tracking-tight text-foreground mr-1" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700 }}>Join Expen</span>
             <span className="tracking-tight text-primary" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 300 }}>Sum</span>
           </h1>
-          <p className="text-muted-foreground mt-1">Start tracking your expenses smarter</p>
         </div>
 
         <Card>

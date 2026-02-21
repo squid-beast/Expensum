@@ -87,7 +87,7 @@ export default function QuickAddExpense({ onSuccess }: Props) {
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed inset-x-0 bottom-0 z-50 rounded-t-2xl bg-card border-t border-border p-5 pb-8"
+              className="fixed inset-x-0 bottom-0 z-50 rounded-t-2xl bg-card border-t border-border p-5 pb-8 max-h-[85vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-base font-semibold">Quick Add</h3>

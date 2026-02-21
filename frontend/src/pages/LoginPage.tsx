@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Wallet, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { authService } from "@/services/authService";
 import { Button } from "@/ui/button";
@@ -43,19 +43,10 @@ export default function LoginPage() {
         className="w-full max-w-md"
       >
         <div className="text-center mb-8">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.15, duration: 0.3 }}
-            className="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-primary/10 mb-4"
-          >
-            <Wallet className="h-7 w-7 text-primary" />
-          </motion.div>
           <h1 className="flex items-center justify-center text-3xl">
             <span className="tracking-tight text-foreground" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700 }}>Expen</span>
             <span className="tracking-tight text-primary" style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 300 }}>Sum</span>
           </h1>
-          <p className="text-muted-foreground mt-1">Your smart expense tracker</p>
         </div>
 
         <Card>

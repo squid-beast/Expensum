@@ -85,25 +85,25 @@ export default function ExpenseList({ expenses, onUpdate }: Props) {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                   <span className="font-semibold">{formatCurrency(exp.amount)}</span>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:text-primary"
+                    className="h-10 w-10 sm:h-8 sm:w-8 text-muted-foreground hover:text-primary"
                     onClick={() => setEditTarget(exp)}
                     title="Edit expense"
                   >
-                    <Pencil className="h-3.5 w-3.5" />
+                    <Pencil className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                    className="h-10 w-10 sm:h-8 sm:w-8 text-muted-foreground hover:text-destructive"
                     onClick={() => setDeleteTarget(exp)}
                     title="Delete expense"
                   >
-                    <Trash2 className="h-3.5 w-3.5" />
+                    <Trash2 className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
                   </Button>
                 </div>
               </div>

@@ -2,16 +2,15 @@ import { useState } from "react";
 import {
   Moon,
   Sun,
-  Bell,
-  BellOff,
   Globe,
   Shield,
-  Trash2,
   LogOut,
   ChevronRight,
 } from "lucide-react";
 import AppLayout from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
+import { Select } from "@/ui/select";
+import { Label } from "@/ui/label";
 import { useAuthStore } from "@/store/authStore";
 import { useNavigate } from "react-router-dom";
 
@@ -59,41 +58,44 @@ interface SettingLinkProps {
   label: string;
   description: string;
   onClick: () => void;
-  destructive?: boolean;
 }
 
-function SettingLink({ icon, label, description, onClick, destructive }: SettingLinkProps) {
+function SettingLink({ icon, label, description, onClick }: SettingLinkProps) {
   return (
     <button
       onClick={onClick}
       className="flex items-center justify-between py-3 w-full text-left cursor-pointer hover:bg-muted/50 -mx-2 px-2 rounded-lg transition-colors"
     >
       <div className="flex items-center gap-3">
-        <div className={`h-9 w-9 rounded-lg flex items-center justify-center shrink-0 ${
-          destructive ? "bg-destructive/10" : "bg-muted"
-        }`}>
+        <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
           {icon}
         </div>
         <div>
-          <p className={`text-sm font-medium ${destructive ? "text-destructive" : ""}`}>{label}</p>
+          <p className="text-sm font-medium">{label}</p>
           <p className="text-xs text-muted-foreground">{description}</p>
         </div>
       </div>
-      <ChevronRight className={`h-4 w-4 ${destructive ? "text-destructive" : "text-muted-foreground"}`} />
+      <ChevronRight className="h-4 w-4 text-muted-foreground" />
     </button>
   );
 }
+
+const currencies = [
+  { value: "USD", label: "USD — US Dollar" },
+  { value: "EUR", label: "EUR — Euro" },
+  { value: "GBP", label: "GBP — British Pound" },
+  { value: "INR", label: "INR — Indian Rupee" },
+  { value: "CAD", label: "CAD — Canadian Dollar" },
+  { value: "AUD", label: "AUD — Australian Dollar" },
+  { value: "JPY", label: "JPY — Japanese Yen" },
+];
 
 export default function SettingsPage() {
   const { clearAuth } = useAuthStore();
   const navigate = useNavigate();
 
-  // Local UI preferences (persisted to localStorage)
   const [darkMode, setDarkMode] = useState(
     () => localStorage.getItem("theme") === "dark"
-  );
-  const [notifications, setNotifications] = useState(
-    () => localStorage.getItem("notifications_enabled") !== "false"
   );
   const [currency, setCurrency] = useState(
     () => localStorage.getItem("currency") || "USD"
@@ -106,10 +108,10 @@ export default function SettingsPage() {
     document.documentElement.classList.toggle("dark", next);
   };
 
-  const toggleNotifications = () => {
-    const next = !notifications;
-    setNotifications(next);
-    localStorage.setItem("notifications_enabled", String(next));
+  const handleCurrencyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const val = e.target.value;
+    setCurrency(val);
+    localStorage.setItem("currency", val);
   };
 
   const handleLogout = () => {
@@ -119,9 +121,9 @@ export default function SettingsPage() {
 
   return (
     <AppLayout>
-      <div className="p-6 space-y-6 max-w-2xl mx-auto">
+      <div className="p-4 md:p-6 space-y-5 max-w-2xl mx-auto">
         <div>
-          <h1 className="text-2xl font-bold">Settings</h1>
+          <h1 className="text-xl font-bold">Settings</h1>
           <p className="text-sm text-muted-foreground">Manage your app preferences</p>
         </div>
 
@@ -130,7 +132,7 @@ export default function SettingsPage() {
           <CardHeader className="pb-2">
             <CardTitle className="text-base">Appearance</CardTitle>
           </CardHeader>
-          <CardContent className="divide-y divide-border">
+          <CardContent>
             <SettingToggle
               icon={darkMode ? <Moon className="h-4 w-4 text-muted-foreground" /> : <Sun className="h-4 w-4 text-muted-foreground" />}
               label="Dark Mode"
@@ -141,65 +143,57 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        {/* Notifications */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Notifications</CardTitle>
-          </CardHeader>
-          <CardContent className="divide-y divide-border">
-            <SettingToggle
-              icon={notifications ? <Bell className="h-4 w-4 text-muted-foreground" /> : <BellOff className="h-4 w-4 text-muted-foreground" />}
-              label="Push Notifications"
-              description="Get notified about budget alerts and household activity"
-              enabled={notifications}
-              onToggle={toggleNotifications}
-            />
-          </CardContent>
-        </Card>
-
         {/* Preferences */}
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-base">Preferences</CardTitle>
           </CardHeader>
           <CardContent className="divide-y divide-border">
-            <SettingLink
-              icon={<Globe className="h-4 w-4 text-muted-foreground" />}
-              label={`Currency: ${currency}`}
-              description="Change your display currency"
-              onClick={() => {
-                const next = currency === "USD" ? "EUR" : currency === "EUR" ? "GBP" : "USD";
-                setCurrency(next);
-                localStorage.setItem("currency", next);
-              }}
-            />
+            {/* Currency selector */}
+            <div className="flex items-center justify-between py-3">
+              <div className="flex items-center gap-3">
+                <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                  <Globe className="h-4 w-4 text-muted-foreground" />
+                </div>
+                <div>
+                  <Label htmlFor="currency-select" className="text-sm font-medium cursor-pointer">Currency</Label>
+                  <p className="text-xs text-muted-foreground">Display currency for amounts</p>
+                </div>
+              </div>
+              <Select
+                id="currency-select"
+                value={currency}
+                onChange={handleCurrencyChange}
+                className="w-auto h-9 text-sm"
+              >
+                {currencies.map((c) => (
+                  <option key={c.value} value={c.value}>
+                    {c.label}
+                  </option>
+                ))}
+              </Select>
+            </div>
+
             <SettingLink
               icon={<Shield className="h-4 w-4 text-muted-foreground" />}
               label="Privacy & Security"
               description="Manage your data and privacy settings"
-              onClick={() => navigate("/profile")}
+              onClick={() => navigate("/privacy-security")}
             />
           </CardContent>
         </Card>
 
-        {/* Account Actions */}
+        {/* Account */}
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-base">Account</CardTitle>
           </CardHeader>
-          <CardContent className="divide-y divide-border">
+          <CardContent>
             <SettingLink
               icon={<LogOut className="h-4 w-4 text-muted-foreground" />}
               label="Sign Out"
               description="Log out of your account"
               onClick={handleLogout}
-            />
-            <SettingLink
-              icon={<Trash2 className="h-4 w-4 text-destructive" />}
-              label="Delete Account"
-              description="Permanently delete your account and data"
-              onClick={() => {/* Future: show confirmation */}}
-              destructive
             />
           </CardContent>
         </Card>

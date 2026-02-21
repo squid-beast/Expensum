@@ -53,8 +53,7 @@ export default function ExpenseForm({ onSuccess }: Props) {
   };
 
   return (
-    <div className="p-1">
-      <h2 className="text-lg font-semibold mb-4">Add Expense</h2>
+    <div>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="category">Category</Label>

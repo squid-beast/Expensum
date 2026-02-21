@@ -5,7 +5,6 @@ import { LogOut, User, ChevronDown } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { useHouseholdStore } from "@/store/householdStore";
 import NotificationBell from "@/components/common/NotificationBell";
-import AchievementBadge from "@/components/common/AchievementBadge";
 import MemberPresence from "@/components/dashboard/MemberPresence";
 
 export default function Header() {
@@ -38,7 +37,6 @@ export default function Header() {
         {activeHousehold && <MemberPresence householdId={activeHousehold.id} />}
       </div>
       <div className="flex items-center gap-3">
-        <AchievementBadge />
         <NotificationBell />
 
         {/* Profile dropdown */}

@@ -26,12 +26,12 @@ export default function ContactPage() {
             <div>
               <h2 className="text-lg font-semibold text-foreground mb-1">Email</h2>
               <p>
-                For support and general inquiries, reach us at{" "}
+                For support and general inquiries,{" "}
                 <a
-                  href="mailto:support@expensum.app"
+                  href="mailto:startwithleo@gmail.com"
                   className="text-primary underline hover:no-underline"
                 >
-                  support@expensum.app
+                  reach out to us
                 </a>
                 . We typically respond within 1–2 business days.
               </p>
@@ -45,12 +45,12 @@ export default function ContactPage() {
             <div>
               <h2 className="text-lg font-semibold text-foreground mb-1">Feedback</h2>
               <p>
-                Suggestions and bug reports help us improve Expensum. Send them to{" "}
+                Suggestions and bug reports help us improve Expensum.{" "}
                 <a
-                  href="mailto:feedback@expensum.app"
+                  href="mailto:startwithleo@gmail.com"
                   className="text-primary underline hover:no-underline"
                 >
-                  feedback@expensum.app
+                  Send us your feedback
                 </a>
                 .
               </p>

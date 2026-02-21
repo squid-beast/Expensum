@@ -10,6 +10,7 @@ import IncomeSetupPage from "@/pages/IncomeSetupPage";
 import HouseholdPage from "@/pages/HouseholdPage";
 import ProfilePage from "@/pages/ProfilePage";
 import SettingsPage from "@/pages/SettingsPage";
+import PrivacySecurityPage from "@/pages/PrivacySecurityPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import PrivacyPage from "@/pages/PrivacyPage";
 import TermsPage from "@/pages/TermsPage";
@@ -78,6 +79,14 @@ function App() {
           element={
             <ProtectedRoute>
               <SettingsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/privacy-security"
+          element={
+            <ProtectedRoute>
+              <PrivacySecurityPage />
             </ProtectedRoute>
           }
         />

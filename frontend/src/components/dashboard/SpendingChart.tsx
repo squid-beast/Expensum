@@ -55,7 +55,7 @@ export default function SpendingChart({ data }: Props) {
             </p>
           ) : (
             <div className="flex flex-col items-center gap-4">
-              <svg viewBox="0 0 200 200" className="w-48 h-48">
+              <svg viewBox="0 0 200 200" className="w-36 h-36 sm:w-48 sm:h-48">
                 {segments.map((seg, i) => (
                   <motion.path
                     key={i}
@@ -77,9 +77,9 @@ export default function SpendingChart({ data }: Props) {
                 </text>
               </svg>
 
-              <div className="grid grid-cols-2 gap-2 w-full">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5 w-full">
                 {segments.slice(0, 6).map((seg, i) => (
-                  <div key={i} className="flex items-center gap-2 text-xs">
+                  <div key={i} className="flex items-center gap-2 text-xs min-w-0">
                     <div
                       className="w-2.5 h-2.5 rounded-full shrink-0"
                       style={{ backgroundColor: seg.color }}

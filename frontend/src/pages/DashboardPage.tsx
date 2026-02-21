@@ -1,20 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { DollarSign, CreditCard, Landmark, Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
+import { Loader2, AlertTriangle, CheckCircle2 } from "lucide-react";
 import AppLayout from "@/components/layout/AppLayout";
-import SummaryCard from "@/components/dashboard/SummaryCard";
 import BudgetOverview from "@/components/dashboard/BudgetOverview";
 import CategoryBreakdown from "@/components/dashboard/CategoryBreakdown";
 import SpendingChart from "@/components/dashboard/SpendingChart";
-import RecentExpenses from "@/components/dashboard/RecentExpenses";
-import SpendingInsights from "@/components/dashboard/SpendingInsights";
-import Achievements from "@/components/dashboard/Achievements";
 import HouseholdSummary from "@/components/dashboard/HouseholdSummary";
 import FairShareComparison from "@/components/dashboard/FairShareComparison";
 import ContributionComparison from "@/components/dashboard/ContributionComparison";
-import CategoryInsightChips from "@/components/dashboard/CategoryInsightChips";
-import TrendIndicator from "@/components/dashboard/TrendIndicator";
-import ExportButton from "@/components/dashboard/ExportButton";
 import PendingInvitations from "@/components/household/PendingInvitations";
 import HouseholdNotes from "@/components/household/HouseholdNotes";
 import OnboardingFlow from "@/components/common/OnboardingFlow";
@@ -24,9 +17,9 @@ import { dashboardService } from "@/services/dashboardService";
 import { householdService } from "@/services/householdService";
 import { useHouseholdStore } from "@/store/householdStore";
 import { useAuthStore } from "@/store/authStore";
+import { formatCurrency } from "@/lib/formatters";
 import type { DashboardSummary } from "@/types/dashboard.types";
 import type { HouseholdDashboardSummary, Invitation } from "@/types/household.types";
-import { Alert, AlertDescription, AlertTitle } from "@/ui/alert";
 
 export default function DashboardPage() {
   const now = new Date();
@@ -39,7 +32,6 @@ export default function DashboardPage() {
   const [onboardingDismissed, setOnboardingDismissed] = useState(
     () => localStorage.getItem("onboarding_dismissed") === "true"
   );
-  const [personalTab, setPersonalTab] = useState<"overview" | "analytics">("overview");
   const activeHousehold = useHouseholdStore((s) => s.activeHousehold);
   const households = useHouseholdStore((s) => s.households);
   const user = useAuthStore((s) => s.user);
@@ -75,6 +67,12 @@ export default function DashboardPage() {
   if (households.some((h) => h.memberCount > 1)) completedSteps.push(2);
   if (summary && summary.totalSpent > 0) completedSteps.push(3);
 
+  // Budget percentage
+  const spentPct =
+    summary && summary.monthlyIncome > 0
+      ? (summary.totalSpent / summary.monthlyIncome) * 100
+      : 0;
+
   if (loading) {
     return (
       <AppLayout>
@@ -89,28 +87,20 @@ export default function DashboardPage() {
   if (activeHousehold && householdSummary) {
     return (
       <AppLayout>
-        <div className="p-6 space-y-6 max-w-7xl mx-auto">
+        <div className="p-4 md:p-6 space-y-5 max-w-4xl mx-auto">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h1 className="text-2xl font-bold">{householdSummary.householdName}</h1>
+              <h1 className="text-xl font-bold">{householdSummary.householdName}</h1>
               <p className="text-sm text-muted-foreground">
                 {householdSummary.memberCount} members · Day {householdSummary.daysElapsed} of{" "}
                 {householdSummary.totalDaysInMonth}
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              <ExportButton
-                month={month}
-                year={year}
-                householdId={activeHousehold.id}
-                type="shared"
-              />
-              <MonthPicker
-                month={month}
-                year={year}
-                onChange={(m, y) => { setMonth(m); setYear(y); }}
-              />
-            </div>
+            <MonthPicker
+              month={month}
+              year={year}
+              onChange={(m, y) => { setMonth(m); setYear(y); }}
+            />
           </div>
 
           {invitations.length > 0 && (
@@ -118,8 +108,6 @@ export default function DashboardPage() {
           )}
 
           <HouseholdSummary data={householdSummary} />
-
-          <CategoryInsightChips data={householdSummary.categoryBreakdown} />
 
           <ContributionComparison
             members={householdSummary.memberBreakdown}
@@ -131,15 +119,12 @@ export default function DashboardPage() {
             fairShare={householdSummary.fairSharePerMember}
           />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             <CategoryBreakdown data={householdSummary.categoryBreakdown} />
             <SpendingChart data={householdSummary.categoryBreakdown} />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <RecentExpenses expenses={householdSummary.recentExpenses} />
-            <HouseholdNotes householdId={activeHousehold.id} />
-          </div>
+          <HouseholdNotes householdId={activeHousehold.id} />
         </div>
 
         <QuickAddExpense onSuccess={fetchData} />
@@ -150,20 +135,17 @@ export default function DashboardPage() {
   // Personal dashboard
   return (
     <AppLayout>
-      <div className="p-6 space-y-6 max-w-7xl mx-auto">
+      <div className="p-4 md:p-6 space-y-5 max-w-4xl mx-auto">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
-            <h1 className="text-2xl font-bold">Dashboard</h1>
+            <h1 className="text-xl font-bold">Dashboard</h1>
             <p className="text-sm text-muted-foreground">Your financial overview</p>
           </div>
-          <div className="flex items-center gap-2">
-            <ExportButton month={month} year={year} />
-            <MonthPicker
-              month={month}
-              year={year}
-              onChange={(m, y) => { setMonth(m); setYear(y); }}
-            />
-          </div>
+          <MonthPicker
+            month={month}
+            year={year}
+            onChange={(m, y) => { setMonth(m); setYear(y); }}
+          />
         </div>
 
         {!onboardingDismissed && completedSteps.length < 4 && (
@@ -180,85 +162,56 @@ export default function DashboardPage() {
           <PendingInvitations invitations={invitations} onUpdate={fetchInvitations} />
         )}
 
-        {summary?.overBudget && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-            <Alert variant="destructive">
-              <AlertTitle>Over Budget!</AlertTitle>
-              <AlertDescription>
-                You've exceeded your monthly income. Review your expenses.
-              </AlertDescription>
-            </Alert>
+        {/* Budget alert banner */}
+        {summary && summary.monthlyIncome > 0 && (
+          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
+            {spentPct >= 100 ? (
+              <div className="flex items-center gap-3 p-3 rounded-lg border border-destructive/50 bg-destructive/10 text-destructive text-sm">
+                <AlertTriangle className="h-4 w-4 shrink-0" />
+                <span>You've exceeded your monthly budget. Review your spending.</span>
+              </div>
+            ) : spentPct >= 80 ? (
+              <div className="flex items-center gap-3 p-3 rounded-lg border border-warning/50 bg-warning/10 text-warning text-sm">
+                <AlertTriangle className="h-4 w-4 shrink-0" />
+                <span>You've used {spentPct.toFixed(0)}% of your budget. Consider slowing down.</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3 p-3 rounded-lg border border-success/50 bg-success/10 text-success text-sm">
+                <CheckCircle2 className="h-4 w-4 shrink-0" />
+                <span>You've used {spentPct.toFixed(1)}% of your budget. You're on track.</span>
+              </div>
+            )}
           </motion.div>
         )}
 
-        {/* Tab Switcher */}
-        <div className="flex gap-1 p-1 bg-muted rounded-lg w-fit">
-          {(["overview", "analytics"] as const).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setPersonalTab(tab)}
-              className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors cursor-pointer ${
-                personalTab === tab
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {tab === "overview" ? "Overview" : "Analytics"}
-            </button>
-          ))}
-        </div>
+        {/* Compact stats row */}
+        {summary && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex items-center justify-between rounded-lg border border-border bg-card p-4 text-sm"
+          >
+            <div className="text-center flex-1">
+              <p className="text-muted-foreground text-xs">Income</p>
+              <p className="font-semibold text-base tabular-nums">{formatCurrency(summary.monthlyIncome)}</p>
+            </div>
+            <div className="h-8 w-px bg-border" />
+            <div className="text-center flex-1">
+              <p className="text-muted-foreground text-xs">Spent</p>
+              <p className="font-semibold text-base tabular-nums text-destructive">{formatCurrency(summary.totalSpent)}</p>
+            </div>
+            <div className="h-8 w-px bg-border" />
+            <div className="text-center flex-1">
+              <p className="text-muted-foreground text-xs">Remaining</p>
+              <p className="font-semibold text-base tabular-nums text-success">{formatCurrency(summary.remaining)}</p>
+            </div>
+          </motion.div>
+        )}
 
-        <AnimatePresence mode="wait">
-          {personalTab === "overview" && (
-            <motion.div
-              key="overview"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.15 }}
-              className="space-y-6"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <SummaryCard title="Monthly Income" value={summary?.monthlyIncome ?? 0} icon={DollarSign} delay={0} />
-                <SummaryCard title="Total Spent" value={summary?.totalSpent ?? 0} icon={CreditCard} trend="up" delay={0.1} />
-                <SummaryCard title="Remaining" value={summary?.remaining ?? 0} icon={Landmark} trend="down" delay={0.2} />
-              </div>
+        <BudgetOverview summary={summary} />
 
-              {summary && (
-                <TrendIndicator
-                  currentSpent={summary.totalSpent}
-                  month={month}
-                  year={year}
-                />
-              )}
-
-              <CategoryInsightChips data={summary?.categoryBreakdown ?? []} />
-
-              <BudgetOverview summary={summary} />
-
-              <RecentExpenses expenses={summary?.recentExpenses ?? []} />
-            </motion.div>
-          )}
-          {personalTab === "analytics" && (
-            <motion.div
-              key="analytics"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.15 }}
-              className="space-y-6"
-            >
-              {summary && <SpendingInsights summary={summary} />}
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <CategoryBreakdown data={summary?.categoryBreakdown ?? []} />
-                <SpendingChart data={summary?.categoryBreakdown ?? []} />
-              </div>
-
-              {summary && <Achievements summary={summary} />}
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <CategoryBreakdown data={summary?.categoryBreakdown ?? []} />
       </div>
 
       <QuickAddExpense onSuccess={fetchData} />

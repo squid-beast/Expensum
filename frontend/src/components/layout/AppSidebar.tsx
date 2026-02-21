@@ -1,6 +1,4 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   Receipt,
@@ -9,200 +7,265 @@ import {
   UserCog,
   Settings,
   LogOut,
+  User,
+  ChevronsUpDown,
 } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/authStore";
+import { useHouseholdStore } from "@/store/householdStore";
+import { Avatar, AvatarFallback } from "@/ui/avatar";
 import {
   Sidebar,
-  SidebarBody,
-  SidebarLink,
+  SidebarHeader,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarSeparator,
   useSidebar,
-  type SidebarLinkConfig,
 } from "@/components/ui/sidebar";
-import HouseholdSwitcher from "@/components/household/HouseholdSwitcher";
-import { useHouseholdStore } from "@/store/householdStore";
 
-const iconClass = "text-muted-foreground dark:text-neutral-200 h-5 w-5 flex-shrink-0";
+/* ------------------------------------------------------------------ */
+/*  Nav config                                                         */
+/* ------------------------------------------------------------------ */
 
-const navLinks: SidebarLinkConfig[] = [
+const iconClass = "h-4 w-4 shrink-0";
+
+const navSections = [
   {
-    label: "Dashboard",
-    href: "/dashboard",
-    icon: <LayoutDashboard className={iconClass} />,
+    label: "Overview",
+    items: [
+      { label: "Dashboard", href: "/dashboard", icon: <LayoutDashboard className={iconClass} /> },
+      { label: "Expenses", href: "/expenses", icon: <Receipt className={iconClass} /> },
+    ],
   },
   {
-    label: "Expenses",
-    href: "/expenses",
-    icon: <Receipt className={iconClass} />,
+    label: "Manage",
+    items: [
+      { label: "Income", href: "/income-setup", icon: <Wallet className={iconClass} /> },
+      { label: "Household", href: "/household", icon: <Home className={iconClass} /> },
+    ],
   },
   {
-    label: "Income",
-    href: "/income-setup",
-    icon: <Wallet className={iconClass} />,
-  },
-  {
-    label: "Household",
-    href: "/household",
-    icon: <Home className={iconClass} />,
-  },
-  {
-    label: "Profile",
-    href: "/profile",
-    icon: <UserCog className={iconClass} />,
-  },
-  {
-    label: "Settings",
-    href: "/settings",
-    icon: <Settings className={iconClass} />,
-  },
-  {
-    label: "Logout",
-    href: "/login",
-    icon: <LogOut className={iconClass} />,
+    label: "Account",
+    items: [
+      { label: "Profile", href: "/profile", icon: <UserCog className={iconClass} /> },
+      { label: "Settings", href: "/settings", icon: <Settings className={iconClass} /> },
+    ],
   },
 ];
 
-// Unsplash stock avatar (reliable placeholder)
-const DEFAULT_AVATAR =
-  "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face";
+/* ------------------------------------------------------------------ */
+/*  Household Switcher (sidebar header)                                */
+/* ------------------------------------------------------------------ */
 
-function SidebarLogo() {
-  const { open } = useSidebar();
+function SidebarHouseholdSwitcher() {
+  const { households, activeHousehold, setActiveHousehold } = useHouseholdStore();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const currentLabel = activeHousehold ? activeHousehold.name : "Personal";
+  const currentSubtitle = activeHousehold ? "Household" : "Individual";
+
   return (
-    <Link
-      to="/dashboard"
-      className="flex items-center py-1 relative z-20"
-    >
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        style={{
-          display: open ? "flex" : "none",
-          alignItems: "center",
-          overflow: "hidden",
-        }}
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-3 w-full rounded-lg px-2 py-2 hover:bg-accent transition-colors cursor-pointer text-left"
       >
-        <span
-          className="text-xl tracking-tight text-foreground whitespace-pre"
-          style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700 }}
-        >
-          Expen
-        </span>
-        <span
-          className="text-xl tracking-tight text-primary whitespace-pre"
-          style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 300 }}
-        >
-          Sum
-        </span>
-      </motion.span>
-    </Link>
-  );
-}
-
-function SidebarLogoIcon() {
-  return (
-    <Link
-      to="/dashboard"
-      className="flex items-center py-1 relative z-20"
-    >
-      <span
-        className="text-xl tracking-tight text-foreground"
-        style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700 }}
-      >
-        E
-      </span>
-    </Link>
-  );
-}
-
-function SidebarContent() {
-  const { open } = useSidebar();
-  const { households } = useHouseholdStore();
-  return (
-    <>
-      <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden min-h-0">
-        {open ? <SidebarLogo /> : <SidebarLogoIcon />}
-        <div className="mt-8 flex flex-col gap-2">
-          {navLinks.map((link) =>
-            link.label === "Logout" ? (
-              <LogoutButton key={link.label} />
-            ) : (
-              <SidebarLink key={link.label} link={link} />
-            )
-          )}
+        {/* Logo icon */}
+        <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+          <span
+            className="text-sm font-bold text-primary"
+            style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+          >
+            E
+          </span>
         </div>
-        {households.length > 0 && (
-          <div className="mt-4 pt-4 border-t border-border">
-            <HouseholdSwitcher />
-          </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold truncate">{currentLabel}</p>
+          <p className="text-[11px] text-muted-foreground truncate">{currentSubtitle}</p>
+        </div>
+        <ChevronsUpDown className="h-4 w-4 text-muted-foreground shrink-0" />
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -4, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -4, scale: 0.97 }}
+            transition={{ duration: 0.12 }}
+            className="absolute left-0 right-0 top-full mt-1 z-50 rounded-xl border border-border bg-card shadow-lg py-1"
+          >
+            <button
+              onClick={() => { setActiveHousehold(null); setOpen(false); }}
+              className={cn(
+                "flex items-center gap-3 w-full px-3 py-2 text-sm transition-colors cursor-pointer",
+                !activeHousehold ? "bg-accent text-foreground font-medium" : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+              )}
+            >
+              <User className="h-4 w-4" />
+              <span>Personal</span>
+            </button>
+            {households.map((h) => (
+              <button
+                key={h.id}
+                onClick={() => { setActiveHousehold(h); setOpen(false); }}
+                className={cn(
+                  "flex items-center gap-3 w-full px-3 py-2 text-sm transition-colors cursor-pointer truncate",
+                  activeHousehold?.id === h.id ? "bg-accent text-foreground font-medium" : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+                )}
+              >
+                <Home className="h-4 w-4 shrink-0" />
+                <span className="truncate">{h.name}</span>
+              </button>
+            ))}
+          </motion.div>
         )}
-      </div>
-      <UserCard />
-    </>
+      </AnimatePresence>
+    </div>
   );
 }
 
-function LogoutButton() {
-  const { open } = useSidebar();
+/* ------------------------------------------------------------------ */
+/*  User Card (sidebar footer)                                         */
+/* ------------------------------------------------------------------ */
+
+function SidebarUserCard() {
+  const user = useAuthStore((s) => s.user);
   const clearAuth = useAuthStore((s) => s.clearAuth);
   const navigate = useNavigate();
-  const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    clearAuth();
-    navigate("/login");
-  };
-  return (
-    <button
-      type="button"
-      onClick={handleClick}
-      className="flex items-center justify-start gap-2 group/sidebar py-2 text-muted-foreground dark:text-neutral-200 hover:text-destructive cursor-pointer w-full text-left"
-    >
-      <LogOut className={iconClass} />
-      <motion.span
-        animate={{
-          display: open ? "inline-block" : "none",
-          opacity: open ? 1 : 0,
-        }}
-        className="text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
-      >
-        Logout
-      </motion.span>
-    </button>
-  );
-}
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const { setOpen: setSidebarOpen } = useSidebar();
 
-function UserCard() {
-  const user = useAuthStore((s) => s.user);
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const initial = user?.fullName?.charAt(0)?.toUpperCase() ?? "U";
+
   return (
-    <div className="flex-shrink-0 py-4 border-t border-border">
-      <SidebarLink
-        link={{
-          label: user?.fullName ?? "User",
-          href: "/profile",
-          icon: (
-            <img
-              src={DEFAULT_AVATAR}
-              alt=""
-              className="h-7 w-7 flex-shrink-0 rounded-full object-cover"
-              width={28}
-              height={28}
-            />
-          ),
-        }}
-      />
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-3 w-full rounded-lg px-2 py-2 hover:bg-accent transition-colors cursor-pointer text-left"
+      >
+        <Avatar>
+          <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+            {initial}
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium truncate">{user?.fullName ?? "User"}</p>
+          <p className="text-[11px] text-muted-foreground truncate">{user?.email ?? ""}</p>
+        </div>
+        <ChevronsUpDown className="h-4 w-4 text-muted-foreground shrink-0" />
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: 4, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 4, scale: 0.97 }}
+            transition={{ duration: 0.12 }}
+            className="absolute left-0 right-0 bottom-full mb-1 z-50 rounded-xl border border-border bg-card shadow-lg py-1"
+          >
+            <div className="px-3 py-2 border-b border-border">
+              <p className="text-sm font-medium truncate">{user?.fullName ?? "User"}</p>
+              <p className="text-xs text-muted-foreground truncate">{user?.email ?? ""}</p>
+            </div>
+            <button
+              onClick={() => {
+                setOpen(false);
+                setSidebarOpen(false);
+                navigate("/profile");
+              }}
+              className="flex items-center gap-3 w-full px-3 py-2 text-sm text-muted-foreground hover:bg-accent/50 hover:text-foreground transition-colors cursor-pointer"
+            >
+              <User className="h-4 w-4" />
+              View Profile
+            </button>
+            <div className="h-px bg-border mx-1" />
+            <button
+              onClick={() => {
+                setOpen(false);
+                clearAuth();
+                navigate("/login");
+              }}
+              className="flex items-center gap-3 w-full px-3 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+            >
+              <LogOut className="h-4 w-4" />
+              Logout
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
+
+/* ------------------------------------------------------------------ */
+/*  Main Component                                                     */
+/* ------------------------------------------------------------------ */
 
 export default function AppSidebar() {
-  const [open, setOpen] = useState(false);
+  const location = useLocation();
+
   return (
-    <div className="h-screen">
-      <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className={cn("justify-between gap-10")}>
-          <SidebarContent />
-        </SidebarBody>
-      </Sidebar>
-    </div>
+    <Sidebar>
+      {/* Header: Logo + Household Switcher */}
+      <SidebarHeader>
+        <SidebarHouseholdSwitcher />
+      </SidebarHeader>
+
+      <SidebarSeparator />
+
+      {/* Navigation */}
+      <SidebarContent>
+        {navSections.map((section) => (
+          <SidebarGroup key={section.label}>
+            <SidebarGroupLabel>{section.label}</SidebarGroupLabel>
+            <SidebarMenu>
+              {section.items.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton
+                    href={item.href}
+                    isActive={location.pathname === item.href}
+                  >
+                    {item.icon}
+                    {item.label}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroup>
+        ))}
+      </SidebarContent>
+
+      {/* Footer: User Card */}
+      <SidebarFooter>
+        <SidebarUserCard />
+      </SidebarFooter>
+    </Sidebar>
   );
 }
