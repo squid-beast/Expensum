@@ -31,18 +31,18 @@ export default function MonthPicker({ month, year, onChange }: Props) {
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1 sm:gap-2">
       <Button variant="outline" size="sm" onClick={goBack}>
         &larr;
       </Button>
-      <span className="text-sm font-medium min-w-[140px] text-center">
+      <span className="text-xs sm:text-sm font-medium min-w-[100px] sm:min-w-[140px] text-center">
         {MONTH_NAMES[month - 1]} {year}
       </span>
       <Button variant="outline" size="sm" onClick={goForward} disabled={isCurrentMonth}>
         &rarr;
       </Button>
       {!isCurrentMonth && (
-        <Button variant="ghost" size="sm" onClick={goToday} className="text-xs">
+        <Button variant="ghost" size="sm" onClick={goToday} className="text-xs hidden sm:inline-flex">
           Today
         </Button>
       )}

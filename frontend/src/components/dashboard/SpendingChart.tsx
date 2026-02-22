@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
-import { formatCurrency } from "@/lib/formatters";
+import { useFormatCurrency } from "@/lib/formatters";
 import type { CategoryBreakdown } from "@/types/dashboard.types";
 
 const COLORS = [
@@ -14,6 +14,7 @@ interface Props {
 }
 
 export default function SpendingChart({ data }: Props) {
+  const formatCurrency = useFormatCurrency();
   const total = data.reduce((sum, cat) => sum + cat.amount, 0);
 
   // Simple donut chart using SVG

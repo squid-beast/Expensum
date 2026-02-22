@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Select } from "@/ui/select";
 import { Label } from "@/ui/label";
 import { useAuthStore } from "@/store/authStore";
+import { useSettingsStore } from "@/store/settingsStore";
 import { useNavigate } from "react-router-dom";
 
 interface SettingToggleProps {
@@ -39,12 +40,12 @@ function SettingToggle({ icon, label, description, enabled, onToggle }: SettingT
         role="switch"
         aria-checked={enabled}
         onClick={onToggle}
-        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
+        className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
           enabled ? "bg-primary" : "bg-muted"
         }`}
       >
         <span
-          className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
+          className={`pointer-events-none inline-block h-6 w-6 rounded-full bg-white shadow-sm transition-transform ${
             enabled ? "translate-x-5" : "translate-x-0"
           }`}
         />
@@ -92,13 +93,11 @@ const currencies = [
 
 export default function SettingsPage() {
   const { clearAuth } = useAuthStore();
+  const { currency, setCurrency } = useSettingsStore();
   const navigate = useNavigate();
 
   const [darkMode, setDarkMode] = useState(
     () => localStorage.getItem("theme") === "dark"
-  );
-  const [currency, setCurrency] = useState(
-    () => localStorage.getItem("currency") || "USD"
   );
 
   const toggleDarkMode = () => {
@@ -109,9 +108,7 @@ export default function SettingsPage() {
   };
 
   const handleCurrencyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const val = e.target.value;
-    setCurrency(val);
-    localStorage.setItem("currency", val);
+    setCurrency(e.target.value);
   };
 
   const handleLogout = () => {

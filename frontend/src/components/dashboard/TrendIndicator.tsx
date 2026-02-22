@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { dashboardService } from "@/services/dashboardService";
-import { formatCurrency } from "@/lib/formatters";
+import { useFormatCurrency } from "@/lib/formatters";
 
 interface Props {
   currentSpent: number;
@@ -11,6 +11,7 @@ interface Props {
 }
 
 export default function TrendIndicator({ currentSpent, month, year }: Props) {
+  const formatCurrency = useFormatCurrency();
   const [prevSpent, setPrevSpent] = useState<number | null>(null);
 
   useEffect(() => {

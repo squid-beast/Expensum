@@ -5,7 +5,6 @@ export interface ExpenseRequest {
   expenseDate: string;
   householdId?: number;
   shared?: boolean;
-  recurring?: boolean;
 }
 
 export interface Expense {
@@ -20,7 +19,6 @@ export interface Expense {
   householdId: number | null;
   householdName: string | null;
   shared: boolean;
-  recurring: boolean;
   ownerName: string | null;
 }
 

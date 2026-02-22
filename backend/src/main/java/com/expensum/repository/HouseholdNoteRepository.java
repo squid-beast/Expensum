@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface HouseholdNoteRepository extends JpaRepository<HouseholdNote, Long> {
     List<HouseholdNote> findByHouseholdIdOrderByCreatedAtDesc(Long householdId);
+    void deleteByHouseholdId(Long householdId);
 }

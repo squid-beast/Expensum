@@ -2,7 +2,6 @@ import { Shield, Lock, Eye, Database, Fingerprint, FileText } from "lucide-react
 import AppLayout from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { useAuthStore } from "@/store/authStore";
-import { Link } from "react-router-dom";
 
 interface InfoRowProps {
   icon: React.ReactNode;
@@ -89,35 +88,6 @@ export default function PrivacySecurityPage() {
           </CardContent>
         </Card>
 
-        {/* Your Rights */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Your Rights</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
-              <p>You have the right to:</p>
-              <ul className="list-disc list-inside space-y-1.5 ml-1">
-                <li>Access all personal data we hold about you</li>
-                <li>Correct any inaccurate information in your profile</li>
-                <li>Export your expense and financial data</li>
-                <li>Request permanent deletion of your account</li>
-                <li>Withdraw from any household at any time</li>
-              </ul>
-              <p className="pt-2">
-                For more details, see our full{" "}
-                <Link to="/privacy" className="text-primary hover:underline">
-                  Privacy Policy
-                </Link>{" "}
-                and{" "}
-                <Link to="/terms" className="text-primary hover:underline">
-                  Terms of Service
-                </Link>
-                .
-              </p>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </AppLayout>
   );

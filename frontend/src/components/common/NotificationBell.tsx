@@ -50,7 +50,7 @@ export default function NotificationBell() {
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            className="absolute right-0 top-full mt-2 w-72 rounded-lg border border-border bg-card shadow-lg z-50"
+            className="absolute right-0 top-full mt-2 w-[calc(100vw-2rem)] sm:w-72 max-w-72 rounded-lg border border-border bg-card shadow-lg z-50"
           >
             <div className="p-3 border-b border-border">
               <p className="text-sm font-semibold">Notifications</p>

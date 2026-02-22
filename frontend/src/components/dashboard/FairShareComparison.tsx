@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Card, CardHeader, CardTitle, CardContent } from "@/ui/card";
-import { formatCurrency } from "@/lib/formatters";
+import { useFormatCurrency } from "@/lib/formatters";
 import type { MemberSpending } from "@/types/household.types";
 
 interface Props {
@@ -9,6 +9,7 @@ interface Props {
 }
 
 export default function FairShareComparison({ members, fairShare }: Props) {
+  const formatCurrency = useFormatCurrency();
   const maxSpent = Math.max(...members.map((m) => m.amountSpent), fairShare, 1);
 
   return (
@@ -30,11 +31,11 @@ export default function FairShareComparison({ members, fairShare }: Props) {
               transition={{ delay: i * 0.08 }}
               className="space-y-2"
             >
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-medium">{member.fullName}</span>
-                <span className={overFair ? "text-destructive" : "text-success"}>
+              <div className="flex items-center justify-between gap-2 text-sm">
+                <span className="font-medium truncate min-w-0">{member.fullName}</span>
+                <span className={`shrink-0 tabular-nums ${overFair ? "text-destructive" : "text-success"}`}>
                   {overFair ? "+" : ""}
-                  {formatCurrency(member.difference)} vs fair share
+                  {formatCurrency(member.difference)}
                 </span>
               </div>
               <div className="relative h-3 rounded-full bg-muted overflow-hidden">

@@ -44,8 +44,6 @@ public class ExpenseService {
         expense.setDescription(request.getDescription());
         expense.setExpenseDate(request.getExpenseDate());
 
-        expense.setRecurring(Boolean.TRUE.equals(request.getRecurring()));
-
         // Household shared expense support
         if (request.getHouseholdId() != null) {
             Household household = householdRepository.findById(request.getHouseholdId())
@@ -131,11 +129,6 @@ public class ExpenseService {
         expenseRepository.delete(expense);
     }
 
-    public List<ExpenseResponse> getRecurringTemplates(Long userId) {
-        return expenseRepository.findByUserIdAndRecurringTrue(userId)
-                .stream().map(this::toResponse).toList();
-    }
-
     private ExpenseResponse toResponse(Expense e) {
         return new ExpenseResponse(
                 e.getId(),
@@ -149,7 +142,6 @@ public class ExpenseService {
                 e.getHousehold() != null ? e.getHousehold().getId() : null,
                 e.getHousehold() != null ? e.getHousehold().getName() : null,
                 e.isShared(),
-                e.isRecurring(),
                 e.getUser().getFullName());
     }
 }

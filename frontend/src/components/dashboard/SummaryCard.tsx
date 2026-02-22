@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/ui/card";
-import { formatCurrency } from "@/lib/formatters";
+import { useFormatCurrency } from "@/lib/formatters";
 import type { LucideIcon } from "lucide-react";
 
 interface SummaryCardProps {
@@ -12,6 +12,7 @@ interface SummaryCardProps {
 }
 
 export default function SummaryCard({ title, value, icon: Icon, trend, delay = 0 }: SummaryCardProps) {
+  const formatCurrency = useFormatCurrency();
   const trendColor =
     trend === "up" ? "text-destructive" : trend === "down" ? "text-success" : "text-muted-foreground";
 

@@ -41,5 +41,4 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
             @Param("start") LocalDate start,
             @Param("end") LocalDate end);
 
-    List<Expense> findByUserIdAndRecurringTrue(Long userId);
 }

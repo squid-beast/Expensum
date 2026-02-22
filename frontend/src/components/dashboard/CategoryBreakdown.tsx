@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
-import { formatCurrency, formatPercent } from "@/lib/formatters";
+import { useFormatCurrency, formatPercent } from "@/lib/formatters";
 import type { CategoryBreakdown as CBType } from "@/types/dashboard.types";
 
 const BAR_COLORS = [
@@ -20,6 +20,7 @@ interface Props {
 }
 
 export default function CategoryBreakdown({ data }: Props) {
+  const formatCurrency = useFormatCurrency();
   const maxAmount = data.length > 0 ? Math.max(...data.map((c) => c.amount)) : 0;
   const total = data.reduce((sum, c) => sum + c.amount, 0);
 
@@ -55,19 +56,19 @@ export default function CategoryBreakdown({ data }: Props) {
                   transition={{ delay: 0.5 + i * 0.06, duration: 0.35 }}
                 >
                   {/* Row: dot + name on left, amount on right */}
-                  <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center justify-between gap-2 mb-1.5">
                     <div className="flex items-center gap-2 min-w-0">
                       <div className={`h-2.5 w-2.5 rounded-full shrink-0 ${DOT_COLORS[i % DOT_COLORS.length]}`} />
                       <span className="text-sm font-medium truncate">{cat.categoryName}</span>
-                      <span className="text-xs text-muted-foreground">
+                      <span className="hidden sm:inline text-xs text-muted-foreground">
                         {cat.transactionCount} {cat.transactionCount === 1 ? "txn" : "txns"}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0 ml-3">
+                    <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                       <span className="text-sm font-semibold tabular-nums">
                         {formatCurrency(cat.amount)}
                       </span>
-                      <span className="text-xs text-muted-foreground w-12 text-right tabular-nums">
+                      <span className="text-xs text-muted-foreground w-10 sm:w-12 text-right tabular-nums">
                         {formatPercent(cat.percentage)}
                       </span>
                     </div>

@@ -11,4 +11,5 @@ public interface InvitationRepository extends JpaRepository<Invitation, Long> {
     List<Invitation> findByInviteeEmailAndStatus(String email, InvitationStatus status);
     Optional<Invitation> findByToken(String token);
     boolean existsByHouseholdIdAndInviteeEmailAndStatus(Long householdId, String email, InvitationStatus status);
+    void deleteByHouseholdId(Long householdId);
 }

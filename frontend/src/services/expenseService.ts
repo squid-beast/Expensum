@@ -31,11 +31,6 @@ export const expenseService = {
     await api.delete(`/expenses/${id}`);
   },
 
-  getRecurringTemplates: async (): Promise<Expense[]> => {
-    const res = await api.get<Expense[]>("/expenses/recurring");
-    return res.data;
-  },
-
   getComments: async (expenseId: number): Promise<ExpenseComment[]> => {
     const res = await api.get<ExpenseComment[]>(`/expenses/${expenseId}/comments`);
     return res.data;

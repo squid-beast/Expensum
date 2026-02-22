@@ -14,20 +14,20 @@ export default function MemberList({ members }: Props) {
           key={member.userId}
           className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
         >
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 shrink-0">
               {member.role === "OWNER" ? (
                 <Crown className="h-4 w-4 text-primary" />
               ) : (
                 <User className="h-4 w-4 text-primary" />
               )}
             </div>
-            <div>
-              <p className="text-sm font-medium">{member.fullName}</p>
-              <p className="text-xs text-muted-foreground">{member.email}</p>
+            <div className="min-w-0">
+              <p className="text-sm font-medium truncate">{member.fullName}</p>
+              <p className="text-xs text-muted-foreground truncate">{member.email}</p>
             </div>
           </div>
-          <Badge variant={member.role === "OWNER" ? "default" : "secondary"}>
+          <Badge variant={member.role === "OWNER" ? "default" : "secondary"} className="shrink-0 ml-2">
             {member.role === "OWNER" ? "Owner" : "Member"}
           </Badge>
         </li>

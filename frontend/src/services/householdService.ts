@@ -67,4 +67,18 @@ export const householdService = {
     const res = await api.post<HouseholdNote>(`/households/${householdId}/notes`, { content });
     return res.data;
   },
+
+  updateBudget: async (householdId: number, monthlyBudget: number): Promise<Household> => {
+    const res = await api.put<Household>(`/households/${householdId}/budget`, { monthlyBudget });
+    return res.data;
+  },
+
+  deleteHousehold: async (id: number): Promise<void> => {
+    await api.delete(`/households/${id}`);
+  },
+
+  joinByInviteCode: async (inviteCode: string): Promise<Household> => {
+    const res = await api.post<Household>("/households/join", { inviteCode });
+    return res.data;
+  },
 };

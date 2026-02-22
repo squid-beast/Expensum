@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data @AllArgsConstructor @Builder
@@ -14,5 +15,6 @@ public class HouseholdResponse {
     private Long createdById;
     private String createdByName;
     private int memberCount;
+    private BigDecimal monthlyBudget;
     private LocalDateTime createdAt;
 }

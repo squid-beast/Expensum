@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Progress } from "@/ui/progress";
-import { formatCurrency, formatPercent } from "@/lib/formatters";
+import { useFormatCurrency, formatPercent } from "@/lib/formatters";
 import type { DashboardSummary } from "@/types/dashboard.types";
 
 interface Props {
@@ -8,6 +8,7 @@ interface Props {
 }
 
 export default function BudgetOverview({ summary }: Props) {
+  const formatCurrency = useFormatCurrency();
   if (!summary || summary.monthlyIncome <= 0) return null;
 
   const spentPct = (summary.totalSpent / summary.monthlyIncome) * 100;

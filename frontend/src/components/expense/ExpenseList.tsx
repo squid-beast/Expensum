@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ClipboardList, Repeat, Pencil, Trash2 } from "lucide-react";
+import { ClipboardList, Pencil, Trash2 } from "lucide-react";
 import { Badge } from "@/ui/badge";
 import { Button } from "@/ui/button";
-import { formatCurrency, formatDate } from "@/lib/formatters";
+import { useFormatCurrency, formatDate } from "@/lib/formatters";
 import { expenseService } from "@/services/expenseService";
 import ConfirmDialog from "@/ui/confirm-dialog";
 import ExpenseEditModal from "@/components/expense/ExpenseEditModal";
@@ -16,6 +16,7 @@ interface Props {
 }
 
 export default function ExpenseList({ expenses, onUpdate }: Props) {
+  const formatCurrency = useFormatCurrency();
   const [deleteTarget, setDeleteTarget] = useState<Expense | null>(null);
   const [editTarget, setEditTarget] = useState<Expense | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -62,31 +63,26 @@ export default function ExpenseList({ expenses, onUpdate }: Props) {
               transition={{ delay: i * 0.03 }}
               className="p-4 rounded-lg border border-border bg-card hover:shadow-sm transition-shadow space-y-2"
             >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 min-w-0 flex-wrap">
-                  <Badge variant="secondary">{exp.categoryName}</Badge>
-                  {exp.shared && (
-                    <Badge variant="outline" className="text-[10px] px-1.5 py-0">
-                      Shared
-                    </Badge>
-                  )}
-                  {exp.recurring && (
-                    <span title="Recurring" className="text-muted-foreground">
-                      <Repeat className="h-3 w-3" />
-                    </span>
-                  )}
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium truncate">
-                      {exp.description ?? "No description"}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {formatDate(exp.expenseDate)}
-                      {exp.ownerName && ` · ${exp.ownerName}`}
-                    </p>
+              <div className="flex items-start sm:items-center justify-between gap-2">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
+                    <Badge variant="secondary">{exp.categoryName}</Badge>
+                    {exp.shared && (
+                      <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                        Shared
+                      </Badge>
+                    )}
                   </div>
+                  <p className="text-sm font-medium truncate">
+                    {exp.description ?? "No description"}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatDate(exp.expenseDate)}
+                    {exp.ownerName && ` · ${exp.ownerName}`}
+                  </p>
                 </div>
                 <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-                  <span className="font-semibold">{formatCurrency(exp.amount)}</span>
+                  <span className="font-semibold text-sm sm:text-base tabular-nums">{formatCurrency(exp.amount)}</span>
                   <Button
                     variant="ghost"
                     size="icon"

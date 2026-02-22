@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/ui/card";
-import { formatCurrency } from "@/lib/formatters";
+import { useFormatCurrency } from "@/lib/formatters";
 import type { MemberSpending } from "@/types/household.types";
 
 interface Props {
@@ -9,6 +9,7 @@ interface Props {
 }
 
 export default function ContributionComparison({ members, currentUserId }: Props) {
+  const formatCurrency = useFormatCurrency();
   if (members.length < 2) return null;
 
   const you = members.find((m) => m.userId === currentUserId);

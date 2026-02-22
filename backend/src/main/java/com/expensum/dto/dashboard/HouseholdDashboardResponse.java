@@ -18,6 +18,11 @@ public class HouseholdDashboardResponse {
     private int totalDaysInMonth;
     private BigDecimal dailyAverage;
     private BigDecimal projectedSpend;
+    private BigDecimal monthlyBudget;
+    private BigDecimal remaining;
+    private boolean overBudget;
+    private boolean riskAlert;
+    private BigDecimal budgetPerMember;
     private List<MemberSpendingDto> memberBreakdown;
     private List<CategoryBreakdownDto> categoryBreakdown;
     private List<RecentExpenseDto> recentExpenses;

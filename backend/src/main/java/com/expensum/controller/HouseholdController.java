@@ -48,4 +48,29 @@ public class HouseholdController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(householdService.inviteMember(principal.getId(), id, request));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @PathVariable Long id) {
+        householdService.deleteHousehold(principal.getId(), id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/budget")
+    public ResponseEntity<HouseholdResponse> updateBudget(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @PathVariable Long id,
+            @RequestBody java.util.Map<String, java.math.BigDecimal> body) {
+        return ResponseEntity.ok(
+                householdService.updateBudget(principal.getId(), id, body.get("monthlyBudget")));
+    }
+
+    @PostMapping("/join")
+    public ResponseEntity<HouseholdResponse> joinByInviteCode(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestBody java.util.Map<String, String> body) {
+        String inviteCode = body.get("inviteCode");
+        return ResponseEntity.ok(householdService.joinByInviteCode(principal.getId(), inviteCode));
+    }
 }

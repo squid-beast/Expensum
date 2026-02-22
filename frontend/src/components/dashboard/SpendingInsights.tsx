@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
-import { formatCurrency, formatPercent } from "@/lib/formatters";
+import { useFormatCurrency, formatPercent } from "@/lib/formatters";
 import { MapPin, UtensilsCrossed, TrendingUp, PartyPopper, Target, Lightbulb, Sparkles } from "lucide-react";
 import type { DashboardSummary } from "@/types/dashboard.types";
 import type { LucideIcon } from "lucide-react";
@@ -15,7 +15,7 @@ interface Insight {
   type: "info" | "warning" | "success";
 }
 
-function generateInsights(s: DashboardSummary): Insight[] {
+function generateInsights(s: DashboardSummary, formatCurrency: (n: number) => string): Insight[] {
   const insights: Insight[] = [];
   const spentPct = s.monthlyIncome > 0 ? (s.totalSpent / s.monthlyIncome) * 100 : 0;
 
@@ -101,7 +101,8 @@ const typeIconColors = {
 };
 
 export default function SpendingInsights({ summary }: Props) {
-  const insights = generateInsights(summary);
+  const formatCurrency = useFormatCurrency();
+  const insights = generateInsights(summary, formatCurrency);
 
   if (insights.length === 0) return null;
 

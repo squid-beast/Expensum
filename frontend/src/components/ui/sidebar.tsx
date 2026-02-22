@@ -82,13 +82,13 @@ export function Sidebar({
               exit={{ x: "-100%" }}
               transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] as const }}
               className={cn(
-                "fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-background border-r border-border md:hidden",
+                "fixed inset-y-0 left-0 z-50 flex w-[85vw] max-w-72 flex-col bg-background border-r border-border md:hidden",
                 className
               )}
             >
               <button
                 onClick={() => setOpen(false)}
-                className="absolute right-3 top-3 rounded-md p-1.5 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer z-10"
+                className="absolute right-3 top-3 rounded-md p-2.5 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer z-10"
                 aria-label="Close sidebar"
               >
                 <X className="h-5 w-5" />

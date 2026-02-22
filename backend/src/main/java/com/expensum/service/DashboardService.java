@@ -169,6 +169,22 @@ public class DashboardService {
                         e.getUser().getFullName()))
                 .toList();
 
+        // Budget calculations
+        BigDecimal monthlyBudget = household.getMonthlyBudget();
+        BigDecimal budgetRemaining = BigDecimal.ZERO;
+        boolean budgetOverBudget = false;
+        boolean budgetRiskAlert = false;
+        BigDecimal budgetPerMember = BigDecimal.ZERO;
+
+        if (monthlyBudget != null && monthlyBudget.compareTo(BigDecimal.ZERO) > 0) {
+            budgetRemaining = monthlyBudget.subtract(totalHouseholdSpent);
+            budgetOverBudget = totalHouseholdSpent.compareTo(monthlyBudget) > 0;
+            budgetRiskAlert = projected.compareTo(monthlyBudget) > 0 && daysElapsed > 0;
+            budgetPerMember = memberCount > 0
+                    ? monthlyBudget.divide(BigDecimal.valueOf(memberCount), 2, RoundingMode.HALF_UP)
+                    : BigDecimal.ZERO;
+        }
+
         return HouseholdDashboardResponse.builder()
                 .householdName(household.getName())
                 .memberCount(memberCount)
@@ -178,6 +194,11 @@ public class DashboardService {
                 .totalDaysInMonth(totalDays)
                 .dailyAverage(dailyAvg)
                 .projectedSpend(projected)
+                .monthlyBudget(monthlyBudget)
+                .remaining(budgetRemaining)
+                .overBudget(budgetOverBudget)
+                .riskAlert(budgetRiskAlert)
+                .budgetPerMember(budgetPerMember)
                 .memberBreakdown(memberBreakdown)
                 .categoryBreakdown(categoryBreakdown)
                 .recentExpenses(recentExpenses)

@@ -135,7 +135,7 @@ export default function SignupPage() {
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone Number <span className="text-muted-foreground font-normal">(optional)</span></Label>
                 <div className="flex gap-2">
-                  <span className="flex h-10 items-center rounded-lg border border-border bg-muted/50 px-3 text-sm text-muted-foreground w-20 shrink-0">
+                  <span className="flex h-10 items-center rounded-lg border border-border bg-muted/50 px-3 text-sm text-muted-foreground w-16 sm:w-20 shrink-0">
                     +1 US
                   </span>
                   <Input
@@ -166,7 +166,7 @@ export default function SignupPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    className="absolute right-1 top-1/2 -translate-y-1/2 p-2 text-muted-foreground hover:text-foreground transition-colors"
                     tabIndex={-1}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -211,7 +211,7 @@ export default function SignupPage() {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    className="absolute right-1 top-1/2 -translate-y-1/2 p-2 text-muted-foreground hover:text-foreground transition-colors"
                     tabIndex={-1}
                   >
                     {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}

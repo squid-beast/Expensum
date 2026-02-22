@@ -48,7 +48,7 @@ export default function PendingInvitations({ invitations, onUpdate }: Props) {
             exit={{ opacity: 0, x: -20 }}
           >
             <Card>
-              <CardContent className="p-4 flex items-center justify-between gap-4">
+              <CardContent className="p-3 sm:p-4 flex items-center justify-between gap-3 sm:gap-4">
                 <div className="min-w-0">
                   <p className="text-sm font-medium truncate">
                     {inv.householdName}

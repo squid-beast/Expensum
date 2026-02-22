@@ -55,9 +55,4 @@ public class ExpenseController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/recurring")
-    public ResponseEntity<List<ExpenseResponse>> getRecurringTemplates(
-            @AuthenticationPrincipal UserPrincipal principal) {
-        return ResponseEntity.ok(expenseService.getRecurringTemplates(principal.getId()));
-    }
 }

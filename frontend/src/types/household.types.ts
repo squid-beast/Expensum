@@ -7,6 +7,7 @@ export interface Household {
   createdById: number;
   createdByName: string;
   memberCount: number;
+  monthlyBudget: number | null;
   createdAt: string;
 }
 
@@ -52,6 +53,11 @@ export interface HouseholdDashboardSummary {
   totalDaysInMonth: number;
   dailyAverage: number;
   projectedSpend: number;
+  monthlyBudget: number | null;
+  remaining: number;
+  overBudget: boolean;
+  riskAlert: boolean;
+  budgetPerMember: number;
   memberBreakdown: MemberSpending[];
   categoryBreakdown: CategoryBreakdown[];
   recentExpenses: RecentExpense[];
@@ -59,6 +65,7 @@ export interface HouseholdDashboardSummary {
 
 export interface CreateHouseholdRequest {
   name: string;
+  monthlyBudget?: number;
 }
 
 export interface InviteRequest {

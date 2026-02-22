@@ -47,7 +47,7 @@ export default function FloatingActionMenu({ actions }: FloatingActionMenuProps)
               transition={{ delay: i * 0.05, duration: 0.2 }}
               className="flex items-center gap-3"
             >
-              <span className="bg-card text-card-foreground text-sm font-medium px-3 py-1.5 rounded-lg shadow-md border border-border whitespace-nowrap">
+              <span className="bg-card text-card-foreground text-sm font-medium px-3 py-1.5 rounded-lg shadow-md border border-border whitespace-nowrap max-w-[200px] truncate">
                 {action.label}
               </span>
               <button

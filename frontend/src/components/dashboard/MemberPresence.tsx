@@ -28,7 +28,7 @@ export default function MemberPresence({ householdId }: Props) {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: i * 0.05 }}
           title={m.fullName}
-          className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary border-2 border-background -ml-1 first:ml-0"
+          className="flex h-8 w-8 sm:h-7 sm:w-7 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary border-2 border-background -ml-1.5 sm:-ml-1 first:ml-0"
         >
           {m.fullName.charAt(0).toUpperCase()}
         </motion.div>

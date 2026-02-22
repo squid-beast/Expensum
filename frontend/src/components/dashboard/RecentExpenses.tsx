@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Badge } from "@/ui/badge";
-import { formatCurrency, formatDate } from "@/lib/formatters";
+import { useFormatCurrency, formatDate } from "@/lib/formatters";
 import type { RecentExpense } from "@/types/dashboard.types";
 
 interface Props {
@@ -9,6 +9,7 @@ interface Props {
 }
 
 export default function RecentExpenses({ expenses }: Props) {
+  const formatCurrency = useFormatCurrency();
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}

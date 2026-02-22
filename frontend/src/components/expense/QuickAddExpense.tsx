@@ -87,13 +87,13 @@ export default function QuickAddExpense({ onSuccess }: Props) {
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed inset-x-0 bottom-0 z-50 rounded-t-2xl bg-card border-t border-border p-5 pb-8 max-h-[85vh] overflow-y-auto"
+              className="fixed inset-x-0 bottom-0 z-50 rounded-t-2xl bg-card border-t border-border p-4 pb-8 sm:p-5 sm:pb-8 max-h-[85vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-base font-semibold">Quick Add</h3>
                 <button
                   onClick={() => setOpen(false)}
-                  className="p-1 rounded-md hover:bg-muted cursor-pointer"
+                  className="p-2.5 -mr-1 rounded-md hover:bg-muted cursor-pointer"
                 >
                   <X className="h-5 w-5 text-muted-foreground" />
                 </button>
@@ -129,7 +129,7 @@ export default function QuickAddExpense({ onSuccess }: Props) {
                       key={v}
                       type="button"
                       onClick={() => setAmount(String(v))}
-                      className="flex-1 py-1.5 text-xs rounded-md bg-secondary text-secondary-foreground hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer"
+                      className="flex-1 py-2.5 text-xs rounded-md bg-secondary text-secondary-foreground hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer"
                     >
                       ${v}
                     </button>
@@ -143,13 +143,13 @@ export default function QuickAddExpense({ onSuccess }: Props) {
                       role="switch"
                       aria-checked={shared}
                       onClick={() => setShared(!shared)}
-                      className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
+                      className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
                         shared ? "bg-primary" : "bg-muted"
                       }`}
                     >
                       <span
-                        className={`pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
-                          shared ? "translate-x-4" : "translate-x-0"
+                        className={`pointer-events-none inline-block h-6 w-6 rounded-full bg-white shadow-sm transition-transform ${
+                          shared ? "translate-x-5" : "translate-x-0"
                         }`}
                       />
                     </button>

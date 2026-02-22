@@ -34,7 +34,6 @@ export default function ExpenseEditModal({
   const [description, setDescription] = useState(expense.description ?? "");
   const [expenseDate, setExpenseDate] = useState(expense.expenseDate);
   const [shared, setShared] = useState(expense.shared);
-  const [recurring, setRecurring] = useState(expense.recurring);
   const [loading, setLoading] = useState(false);
   const activeHousehold = useHouseholdStore((s) => s.activeHousehold);
 
@@ -51,7 +50,6 @@ export default function ExpenseEditModal({
         amount: parseFloat(amount),
         description: description || undefined,
         expenseDate,
-        recurring: recurring || undefined,
         ...(activeHousehold && shared
           ? { householdId: activeHousehold.id, shared: true }
           : {}),
@@ -123,7 +121,7 @@ export default function ExpenseEditModal({
             />
           </div>
 
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6">
             {activeHousehold && (
               <div className="flex items-center gap-3">
                 <button
@@ -131,12 +129,12 @@ export default function ExpenseEditModal({
                   role="switch"
                   aria-checked={shared}
                   onClick={() => setShared(!shared)}
-                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
+                  className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
                     shared ? "bg-primary" : "bg-muted"
                   }`}
                 >
                   <span
-                    className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
+                    className={`pointer-events-none inline-block h-6 w-6 rounded-full bg-white shadow-sm transition-transform ${
                       shared ? "translate-x-5" : "translate-x-0"
                     }`}
                   />
@@ -147,26 +145,6 @@ export default function ExpenseEditModal({
               </div>
             )}
 
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                role="switch"
-                aria-checked={recurring}
-                onClick={() => setRecurring(!recurring)}
-                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
-                  recurring ? "bg-primary" : "bg-muted"
-                }`}
-              >
-                <span
-                  className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
-                    recurring ? "translate-x-5" : "translate-x-0"
-                  }`}
-                />
-              </button>
-              <Label className="cursor-pointer" onClick={() => setRecurring(!recurring)}>
-                Recurring
-              </Label>
-            </div>
           </div>
 
           <div className="flex gap-2 justify-end pt-2">

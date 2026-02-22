@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Home, Copy, Check, Loader2, Plus, Settings } from "lucide-react";
+import { Home, Copy, Check, Loader2, Plus, Settings, Trash2, LinkIcon, Wallet } from "lucide-react";
 import AppLayout from "@/components/layout/AppLayout";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/ui/card";
 import { Button } from "@/ui/button";
+import { Input } from "@/ui/input";
 import CreateHouseholdForm from "@/components/household/CreateHouseholdForm";
 import InviteMemberForm from "@/components/household/InviteMemberForm";
 import MemberList from "@/components/household/MemberList";
 import PendingInvitations from "@/components/household/PendingInvitations";
+import { Label } from "@/ui/label";
 import { householdService } from "@/services/householdService";
 import { useHouseholdStore } from "@/store/householdStore";
+import { useAuthStore } from "@/store/authStore";
+import { useFormatCurrency } from "@/lib/formatters";
 import type { HouseholdDetail, Invitation } from "@/types/household.types";
 
 type HouseholdTab = "overview" | "manage";
@@ -17,12 +21,22 @@ type HouseholdTab = "overview" | "manage";
 export default function HouseholdPage() {
   const { households, setHouseholds, activeHousehold, setActiveHousehold } =
     useHouseholdStore();
+  const { user } = useAuthStore();
   const [detail, setDetail] = useState<HouseholdDetail | null>(null);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [tab, setTab] = useState<HouseholdTab>("overview");
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [joinCode, setJoinCode] = useState("");
+  const [joining, setJoining] = useState(false);
+  const [joinError, setJoinError] = useState("");
+  const [budgetInput, setBudgetInput] = useState("");
+  const [editingBudget, setEditingBudget] = useState(false);
+  const [savingBudget, setSavingBudget] = useState(false);
+  const formatCurrency = useFormatCurrency();
 
   const fetchData = async () => {
     setLoading(true);
@@ -72,6 +86,58 @@ export default function HouseholdPage() {
     fetchData();
   };
 
+  const isOwner = detail && user ? detail.createdById === user.id : false;
+
+  const handleDeleteHousehold = async () => {
+    if (!detail) return;
+    setDeleting(true);
+    try {
+      await householdService.deleteHousehold(detail.id);
+      setShowDeleteConfirm(false);
+      setDetail(null);
+      setActiveHousehold(null);
+      setTab("overview");
+      await fetchData();
+    } catch {
+      // silently handle
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handleSaveBudget = async () => {
+    if (!detail || !budgetInput.trim()) return;
+    setSavingBudget(true);
+    try {
+      await householdService.updateBudget(detail.id, parseFloat(budgetInput));
+      setEditingBudget(false);
+      await fetchData();
+    } catch {
+      // silently handle
+    } finally {
+      setSavingBudget(false);
+    }
+  };
+
+  const handleJoinByCode = async () => {
+    if (!joinCode.trim()) return;
+    setJoining(true);
+    setJoinError("");
+    try {
+      await householdService.joinByInviteCode(joinCode.trim());
+      setJoinCode("");
+      await fetchData();
+    } catch (err: unknown) {
+      const message =
+        err && typeof err === "object" && "response" in err
+          ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+          : undefined;
+      setJoinError(message || "Invalid invite code or you're already a member");
+    } finally {
+      setJoining(false);
+    }
+  };
+
   if (loading) {
     return (
       <AppLayout>
@@ -98,19 +164,60 @@ export default function HouseholdPage() {
         {/* Pending invitations — always visible */}
         <PendingInvitations invitations={invitations} onUpdate={fetchData} />
 
-        {/* No household — show create form */}
+        {/* No household — show create form + join by code */}
         {households.length === 0 && !detail && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Create a household</CardTitle>
-              <CardDescription>
-                Set up a shared space to track expenses with your roommates
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <CreateHouseholdForm onCreated={handleCreated} />
-            </CardContent>
-          </Card>
+          <>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Create a household</CardTitle>
+                <CardDescription>
+                  Set up a shared space to track expenses with your roommates
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <CreateHouseholdForm onCreated={handleCreated} />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <LinkIcon className="h-4 w-4" />
+                  Join with Invite Code
+                </CardTitle>
+                <CardDescription>
+                  Have an invite code? Enter it below to join an existing household
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <Input
+                    placeholder="Paste invite code here"
+                    value={joinCode}
+                    onChange={(e) => {
+                      setJoinCode(e.target.value);
+                      setJoinError("");
+                    }}
+                    onKeyDown={(e) => e.key === "Enter" && handleJoinByCode()}
+                  />
+                  <Button
+                    onClick={handleJoinByCode}
+                    disabled={joining || !joinCode.trim()}
+                    className="shrink-0 w-full sm:w-auto"
+                  >
+                    {joining ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      "Join"
+                    )}
+                  </Button>
+                </div>
+                {joinError && (
+                  <p className="text-sm text-destructive mt-2">{joinError}</p>
+                )}
+              </CardContent>
+            </Card>
+          </>
         )}
 
         {/* Has household — show tabbed view */}
@@ -162,6 +269,9 @@ export default function HouseholdPage() {
                           <CardTitle className="text-lg">{detail.name}</CardTitle>
                           <CardDescription>
                             {detail.memberCount} member{detail.memberCount !== 1 ? "s" : ""}
+                            {activeHousehold?.monthlyBudget != null && activeHousehold.monthlyBudget > 0 && (
+                              <> · Budget: {formatCurrency(activeHousehold.monthlyBudget)}/mo</>
+                            )}
                           </CardDescription>
                         </div>
                         <Button
@@ -225,6 +335,88 @@ export default function HouseholdPage() {
                     </CardContent>
                   </Card>
 
+                  {/* Household Budget — owner can edit */}
+                  <Card>
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <CardTitle className="text-lg flex items-center gap-2">
+                            <Wallet className="h-4 w-4" />
+                            Monthly Budget
+                          </CardTitle>
+                          <CardDescription>
+                            {activeHousehold?.monthlyBudget != null && activeHousehold.monthlyBudget > 0
+                              ? `Current budget: ${formatCurrency(activeHousehold.monthlyBudget)}/month`
+                              : "No budget set yet"}
+                          </CardDescription>
+                        </div>
+                        {isOwner && !editingBudget && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setBudgetInput(
+                                activeHousehold?.monthlyBudget
+                                  ? String(activeHousehold.monthlyBudget)
+                                  : ""
+                              );
+                              setEditingBudget(true);
+                            }}
+                          >
+                            {activeHousehold?.monthlyBudget ? "Edit" : "Set Budget"}
+                          </Button>
+                        )}
+                      </div>
+                    </CardHeader>
+                    <AnimatePresence>
+                      {editingBudget && isOwner && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="overflow-hidden"
+                        >
+                          <CardContent className="space-y-3">
+                            <div className="space-y-2">
+                              <Label htmlFor="edit-budget">Monthly budget amount</Label>
+                              <Input
+                                id="edit-budget"
+                                type="number"
+                                step="0.01"
+                                min="0.01"
+                                placeholder="e.g. 3000"
+                                value={budgetInput}
+                                onChange={(e) => setBudgetInput(e.target.value)}
+                                onKeyDown={(e) => e.key === "Enter" && handleSaveBudget()}
+                              />
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                onClick={handleSaveBudget}
+                                disabled={savingBudget || !budgetInput.trim()}
+                                size="sm"
+                              >
+                                {savingBudget ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  "Save"
+                                )}
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setEditingBudget(false)}
+                                disabled={savingBudget}
+                              >
+                                Cancel
+                              </Button>
+                            </div>
+                          </CardContent>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </Card>
+
                   {/* Switch household */}
                   {households.length > 1 && (
                     <Card>
@@ -262,6 +454,46 @@ export default function HouseholdPage() {
                       </CardContent>
                     </Card>
                   )}
+
+                  {/* Join by invite code */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <LinkIcon className="h-4 w-4" />
+                        Join with Invite Code
+                      </CardTitle>
+                      <CardDescription>
+                        Have an invite code? Enter it to join another household
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="Paste invite code here"
+                          value={joinCode}
+                          onChange={(e) => {
+                            setJoinCode(e.target.value);
+                            setJoinError("");
+                          }}
+                          onKeyDown={(e) => e.key === "Enter" && handleJoinByCode()}
+                        />
+                        <Button
+                          onClick={handleJoinByCode}
+                          disabled={joining || !joinCode.trim()}
+                          className="shrink-0"
+                        >
+                          {joining ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            "Join"
+                          )}
+                        </Button>
+                      </div>
+                      {joinError && (
+                        <p className="text-sm text-destructive mt-2">{joinError}</p>
+                      )}
+                    </CardContent>
+                  </Card>
 
                   {/* Create another household */}
                   <Card>
@@ -308,6 +540,67 @@ export default function HouseholdPage() {
                       )}
                     </AnimatePresence>
                   </Card>
+
+                  {/* Delete household — owner only */}
+                  {isOwner && (
+                    <Card className="border-destructive/30">
+                      <CardHeader>
+                        <CardTitle className="text-lg text-destructive">Danger Zone</CardTitle>
+                        <CardDescription>
+                          Permanently delete this household and remove all members
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <AnimatePresence mode="wait">
+                          {!showDeleteConfirm ? (
+                            <motion.div key="btn" initial={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                              <Button
+                                variant="destructive"
+                                onClick={() => setShowDeleteConfirm(true)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                                Delete Household
+                              </Button>
+                            </motion.div>
+                          ) : (
+                            <motion.div
+                              key="confirm"
+                              initial={{ opacity: 0, y: 5 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0 }}
+                              className="space-y-3"
+                            >
+                              <p className="text-sm text-muted-foreground">
+                                Are you sure? This will remove <strong>{detail.name}</strong> and all its
+                                members. Shared expenses will be unlinked but not deleted.
+                              </p>
+                              <div className="flex gap-2">
+                                <Button
+                                  variant="destructive"
+                                  onClick={handleDeleteHousehold}
+                                  disabled={deleting}
+                                >
+                                  {deleting ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                  ) : (
+                                    <Trash2 className="h-4 w-4" />
+                                  )}
+                                  {deleting ? "Deleting..." : "Yes, delete"}
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  onClick={() => setShowDeleteConfirm(false)}
+                                  disabled={deleting}
+                                >
+                                  Cancel
+                                </Button>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </CardContent>
+                    </Card>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>

@@ -22,6 +22,8 @@ public class HouseholdService {
     private final HouseholdMemberRepository memberRepository;
     private final InvitationRepository invitationRepository;
     private final UserRepository userRepository;
+    private final ExpenseRepository expenseRepository;
+    private final HouseholdNoteRepository noteRepository;
 
     @Transactional
     public HouseholdResponse createHousehold(Long userId, CreateHouseholdRequest request) {
@@ -32,6 +34,9 @@ public class HouseholdService {
         household.setName(request.getName());
         household.setCreatedBy(user);
         household.setInviteCode(UUID.randomUUID().toString());
+        if (request.getMonthlyBudget() != null) {
+            household.setMonthlyBudget(request.getMonthlyBudget());
+        }
         household = householdRepository.save(household);
 
         HouseholdMember member = new HouseholdMember();
@@ -75,6 +80,8 @@ public class HouseholdService {
                 .inviteCode(household.getInviteCode())
                 .createdById(household.getCreatedBy().getId())
                 .createdByName(household.getCreatedBy().getFullName())
+                .memberCount(members.size())
+                .monthlyBudget(household.getMonthlyBudget())
                 .createdAt(household.getCreatedAt())
                 .members(members)
                 .build();
@@ -176,6 +183,73 @@ public class HouseholdService {
         invitationRepository.save(invitation);
     }
 
+    @Transactional
+    public void deleteHousehold(Long userId, Long householdId) {
+        Household household = householdRepository.findById(householdId)
+                .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
+
+        if (!household.getCreatedBy().getId().equals(userId)) {
+            throw new UnauthorizedException("Only the owner can delete this household");
+        }
+
+        // Unlink shared expenses (set household to null, keep the expense)
+        List<Expense> sharedExpenses = expenseRepository
+                .findByHouseholdIdAndSharedTrueAndExpenseDateBetweenOrderByExpenseDateDesc(
+                        householdId,
+                        java.time.LocalDate.of(2000, 1, 1),
+                        java.time.LocalDate.of(2099, 12, 31));
+        for (Expense expense : sharedExpenses) {
+            expense.setHousehold(null);
+            expense.setShared(false);
+        }
+        expenseRepository.saveAll(sharedExpenses);
+
+        // Delete related data
+        noteRepository.deleteByHouseholdId(householdId);
+        invitationRepository.deleteByHouseholdId(householdId);
+        memberRepository.deleteByHouseholdId(householdId);
+        householdRepository.delete(household);
+    }
+
+    @Transactional
+    public HouseholdResponse joinByInviteCode(Long userId, String inviteCode) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        Household household = householdRepository.findByInviteCode(inviteCode)
+                .orElseThrow(() -> new ResourceNotFoundException("Invalid invite code"));
+
+        if (memberRepository.existsByHouseholdIdAndUserId(household.getId(), userId)) {
+            throw new BadRequestException("You are already a member of this household");
+        }
+
+        HouseholdMember member = new HouseholdMember();
+        member.setHousehold(household);
+        member.setUser(user);
+        member.setRole(HouseholdRole.MEMBER);
+        member.setJoinedAt(LocalDateTime.now());
+        memberRepository.save(member);
+
+        int count = memberRepository.findByHouseholdId(household.getId()).size();
+        return toResponse(household, count);
+    }
+
+    @Transactional
+    public HouseholdResponse updateBudget(Long userId, Long householdId, java.math.BigDecimal budget) {
+        Household household = householdRepository.findById(householdId)
+                .orElseThrow(() -> new ResourceNotFoundException("Household not found"));
+
+        if (!household.getCreatedBy().getId().equals(userId)) {
+            throw new UnauthorizedException("Only the owner can update the household budget");
+        }
+
+        household.setMonthlyBudget(budget);
+        household = householdRepository.save(household);
+
+        int count = memberRepository.findByHouseholdId(householdId).size();
+        return toResponse(household, count);
+    }
+
     public void verifyMembership(Long userId, Long householdId) {
         if (!memberRepository.existsByHouseholdIdAndUserId(householdId, userId)) {
             throw new UnauthorizedException("Not a member of this household");
@@ -190,6 +264,7 @@ public class HouseholdService {
                 .createdById(h.getCreatedBy().getId())
                 .createdByName(h.getCreatedBy().getFullName())
                 .memberCount(memberCount)
+                .monthlyBudget(h.getMonthlyBudget())
                 .createdAt(h.getCreatedAt())
                 .build();
     }

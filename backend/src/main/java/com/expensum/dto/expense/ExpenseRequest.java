@@ -28,6 +28,4 @@ public class ExpenseRequest {
     private Long householdId;
 
     private Boolean shared;
-
-    private Boolean recurring;
 }

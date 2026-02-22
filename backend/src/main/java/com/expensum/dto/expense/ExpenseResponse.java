@@ -21,6 +21,5 @@ public class ExpenseResponse {
     private Long householdId;
     private String householdName;
     private boolean shared;
-    private boolean recurring;
     private String ownerName;
 }

@@ -17,9 +17,21 @@ import { Badge } from "@/ui/badge";
 import { useAuthStore } from "@/store/authStore";
 import { useHouseholdStore } from "@/store/householdStore";
 import { userService } from "@/services/userService";
-import { formatCurrency } from "@/lib/formatters";
+import { useFormatCurrency } from "@/lib/formatters";
+
+/** Format a phone string to US format: (XXX) XXX-XXXX */
+function formatUSPhone(phone: string): string {
+  const digits = phone.replace(/\D/g, "");
+  // Strip leading country code "1" if present
+  const d = digits.length === 11 && digits.startsWith("1") ? digits.slice(1) : digits;
+  if (d.length === 10) {
+    return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
+  }
+  return phone; // Return as-is if not 10 digits
+}
 
 export default function ProfilePage() {
+  const formatCurrency = useFormatCurrency();
   const { user, setUser } = useAuthStore();
   const households = useHouseholdStore((s) => s.households);
 
@@ -91,30 +103,7 @@ export default function ProfilePage() {
             {user?.phoneNumber && (
               <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-0.5">
                 <Phone className="h-3.5 w-3.5 shrink-0" />
-                <span>{user.phoneNumber}</span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Personal Information */}
-        <div className="border-t border-border py-5">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-4">
-            Personal Information
-          </h2>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <Label className="text-sm text-muted-foreground">Full Name</Label>
-              <span className="text-sm font-medium">{user?.fullName}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <Label className="text-sm text-muted-foreground">Email</Label>
-              <span className="text-sm font-medium">{user?.email}</span>
-            </div>
-            {user?.phoneNumber && (
-              <div className="flex items-center justify-between">
-                <Label className="text-sm text-muted-foreground">Phone</Label>
-                <span className="text-sm font-medium">{user.phoneNumber}</span>
+                <span>{formatUSPhone(user.phoneNumber)}</span>
               </div>
             )}
           </div>

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -14,6 +15,8 @@ public class HouseholdDetailResponse {
     private String inviteCode;
     private Long createdById;
     private String createdByName;
+    private int memberCount;
+    private BigDecimal monthlyBudget;
     private LocalDateTime createdAt;
     private List<MemberDto> members;
 }

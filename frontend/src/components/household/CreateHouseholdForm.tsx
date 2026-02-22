@@ -13,6 +13,7 @@ interface Props {
 
 export default function CreateHouseholdForm({ onCreated }: Props) {
   const [name, setName] = useState("");
+  const [budget, setBudget] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const setActiveHousehold = useHouseholdStore((s) => s.setActiveHousehold);
@@ -24,9 +25,13 @@ export default function CreateHouseholdForm({ onCreated }: Props) {
     setLoading(true);
     setError("");
     try {
-      const household = await householdService.create({ name: name.trim() });
+      const household = await householdService.create({
+        name: name.trim(),
+        ...(budget ? { monthlyBudget: parseFloat(budget) } : {}),
+      });
       setActiveHousehold(household);
       setName("");
+      setBudget("");
       onCreated();
     } catch (err: unknown) {
       const msg =
@@ -54,6 +59,22 @@ export default function CreateHouseholdForm({ onCreated }: Props) {
           maxLength={100}
           required
         />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="household-budget">Monthly budget</Label>
+        <Input
+          id="household-budget"
+          type="number"
+          step="0.01"
+          min="0.01"
+          placeholder="e.g. 3000"
+          value={budget}
+          onChange={(e) => setBudget(e.target.value)}
+        />
+        <p className="text-xs text-muted-foreground">
+          Set a monthly spending target for the household (optional)
+        </p>
       </div>
 
       {error && (

@@ -16,10 +16,11 @@ import { expenseService } from "@/services/expenseService";
 import { useHouseholdStore } from "@/store/householdStore";
 import type { Expense } from "@/types/expense.types";
 import { Button } from "@/ui/button";
-import { formatCurrency } from "@/lib/formatters";
+import { useFormatCurrency } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 
 export default function ExpensesPage() {
+  const formatCurrency = useFormatCurrency();
   const now = new Date();
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [year, setYear] = useState(now.getFullYear());
@@ -61,14 +62,15 @@ export default function ExpensesPage() {
               {formatCurrency(expenses.reduce((s, e) => s + e.amount, 0))} total
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <MonthPicker
               month={month}
               year={year}
               onChange={(m, y) => { setMonth(m); setYear(y); }}
             />
             <Button onClick={() => setShowForm(true)}>
-              + Add Expense
+              <span className="sm:hidden">+</span>
+              <span className="hidden sm:inline">+ Add Expense</span>
             </Button>
           </div>
         </div>

@@ -99,10 +99,10 @@ export default function HeroSection() {
           </div>
 
           {/* ── Floating preview widgets ── */}
-          <div className="relative min-h-[380px] md:min-h-[440px]">
+          <div className="relative min-h-[340px] sm:min-h-[380px] md:min-h-[440px]">
             {/* Main card — Top spending */}
             <motion.div
-              className="absolute left-1/2 top-1/2 z-10 w-64 -translate-x-1/2 -translate-y-1/2 md:w-72"
+              className="absolute left-1/2 top-1/2 z-10 w-56 sm:w-64 -translate-x-1/2 -translate-y-1/2 md:w-72"
               variants={floatCard(0.5, 0, 40)}
               initial="hidden"
               animate="visible"

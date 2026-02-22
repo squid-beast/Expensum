@@ -17,11 +17,12 @@ import { dashboardService } from "@/services/dashboardService";
 import { householdService } from "@/services/householdService";
 import { useHouseholdStore } from "@/store/householdStore";
 import { useAuthStore } from "@/store/authStore";
-import { formatCurrency } from "@/lib/formatters";
+import { useFormatCurrency } from "@/lib/formatters";
 import type { DashboardSummary } from "@/types/dashboard.types";
 import type { HouseholdDashboardSummary, Invitation } from "@/types/household.types";
 
 export default function DashboardPage() {
+  const formatCurrency = useFormatCurrency();
   const now = new Date();
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [year, setYear] = useState(now.getFullYear());
@@ -107,6 +108,28 @@ export default function DashboardPage() {
             <PendingInvitations invitations={invitations} onUpdate={fetchInvitations} />
           )}
 
+          {/* Household budget alert banner */}
+          {householdSummary.monthlyBudget != null && householdSummary.monthlyBudget > 0 && (
+            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
+              {householdSummary.overBudget ? (
+                <div className="flex items-center gap-3 p-3 rounded-lg border border-destructive/50 bg-destructive/10 text-destructive text-sm">
+                  <AlertTriangle className="h-4 w-4 shrink-0" />
+                  <span>Household has exceeded the monthly budget of {formatCurrency(householdSummary.monthlyBudget)}. Review spending.</span>
+                </div>
+              ) : householdSummary.riskAlert ? (
+                <div className="flex items-center gap-3 p-3 rounded-lg border border-warning/50 bg-warning/10 text-warning text-sm">
+                  <AlertTriangle className="h-4 w-4 shrink-0" />
+                  <span>At this pace, household will exceed the {formatCurrency(householdSummary.monthlyBudget)} budget. Consider slowing down.</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3 p-3 rounded-lg border border-success/50 bg-success/10 text-success text-sm">
+                  <CheckCircle2 className="h-4 w-4 shrink-0" />
+                  <span>Household spending is on track. {formatCurrency(householdSummary.remaining)} remaining of {formatCurrency(householdSummary.monthlyBudget)} budget.</span>
+                </div>
+              )}
+            </motion.div>
+          )}
+
           <HouseholdSummary data={householdSummary} />
 
           <ContributionComparison
@@ -190,21 +213,21 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="flex items-center justify-between rounded-lg border border-border bg-card p-4 text-sm"
+            className="flex items-center justify-between rounded-lg border border-border bg-card p-3 sm:p-4 text-sm"
           >
-            <div className="text-center flex-1">
+            <div className="text-center flex-1 min-w-0">
               <p className="text-muted-foreground text-xs">Income</p>
-              <p className="font-semibold text-base tabular-nums">{formatCurrency(summary.monthlyIncome)}</p>
+              <p className="font-semibold text-sm sm:text-base tabular-nums truncate">{formatCurrency(summary.monthlyIncome)}</p>
             </div>
-            <div className="h-8 w-px bg-border" />
-            <div className="text-center flex-1">
+            <div className="h-8 w-px bg-border shrink-0" />
+            <div className="text-center flex-1 min-w-0">
               <p className="text-muted-foreground text-xs">Spent</p>
-              <p className="font-semibold text-base tabular-nums text-destructive">{formatCurrency(summary.totalSpent)}</p>
+              <p className="font-semibold text-sm sm:text-base tabular-nums text-destructive truncate">{formatCurrency(summary.totalSpent)}</p>
             </div>
-            <div className="h-8 w-px bg-border" />
-            <div className="text-center flex-1">
+            <div className="h-8 w-px bg-border shrink-0" />
+            <div className="text-center flex-1 min-w-0">
               <p className="text-muted-foreground text-xs">Remaining</p>
-              <p className="font-semibold text-base tabular-nums text-success">{formatCurrency(summary.remaining)}</p>
+              <p className="font-semibold text-sm sm:text-base tabular-nums text-success truncate">{formatCurrency(summary.remaining)}</p>
             </div>
           </motion.div>
         )}
