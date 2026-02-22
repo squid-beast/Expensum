@@ -6,6 +6,7 @@ import { authService } from "@/services/authService";
 import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
 import { Label } from "@/ui/label";
+import { Select } from "@/ui/select";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/ui/card";
 import {
   Dialog,
@@ -16,6 +17,29 @@ import {
   DialogFooter,
 } from "@/ui/dialog";
 import { CheckCircle2 } from "lucide-react";
+
+const COUNTRY_CODES = [
+  { value: "+1", label: "+1 US" },
+  { value: "+44", label: "+44 UK" },
+  { value: "+91", label: "+91 IN" },
+  { value: "+61", label: "+61 AU" },
+  { value: "+33", label: "+33 FR" },
+  { value: "+49", label: "+49 DE" },
+  { value: "+81", label: "+81 JP" },
+  { value: "+86", label: "+86 CN" },
+  { value: "+55", label: "+55 BR" },
+  { value: "+52", label: "+52 MX" },
+  { value: "+82", label: "+82 KR" },
+  { value: "+39", label: "+39 IT" },
+  { value: "+34", label: "+34 ES" },
+  { value: "+7", label: "+7 RU" },
+  { value: "+971", label: "+971 AE" },
+  { value: "+65", label: "+65 SG" },
+  { value: "+60", label: "+60 MY" },
+  { value: "+63", label: "+63 PH" },
+  { value: "+234", label: "+234 NG" },
+  { value: "+27", label: "+27 ZA" },
+];
 
 const PASSWORD_RULES = [
   { label: "At least 8 characters", test: (pw: string) => pw.length >= 8 },
@@ -28,7 +52,7 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [phoneCode] = useState("+1");
+  const [phoneCode, setPhoneCode] = useState("+1");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -135,9 +159,17 @@ export default function SignupPage() {
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone Number <span className="text-muted-foreground font-normal">(optional)</span></Label>
                 <div className="flex gap-2">
-                  <span className="flex h-10 items-center rounded-lg border border-border bg-muted/50 px-3 text-sm text-muted-foreground w-16 sm:w-20 shrink-0">
-                    +1 US
-                  </span>
+                  <Select
+                    value={phoneCode}
+                    onChange={(e) => setPhoneCode(e.target.value)}
+                    className="w-24 sm:w-28 shrink-0"
+                  >
+                    {COUNTRY_CODES.map((cc) => (
+                      <option key={cc.value} value={cc.value}>
+                        {cc.label}
+                      </option>
+                    ))}
+                  </Select>
                   <Input
                     id="phone"
                     type="tel"

@@ -35,7 +35,7 @@ public class User {
     @Column(name = "savings_goal", precision = 10, scale = 2)
     private BigDecimal savingsGoal;
 
-    @Column(name = "phone_number", nullable = false, length = 20)
+    @Column(name = "phone_number", length = 20)
     private String phoneNumber;
 
     @CreationTimestamp
